@@ -1,0 +1,80 @@
+:root {
+  /* Colors */
+  --bg-primary: #f4f4f0;
+  --accent-1: #ff5470;
+  --accent-2: #00ebc7;
+  --accent-3: #fde24f;
+  --text-main: #0b0c10;
+  --white: #ffffff;
+  
+  /* Borders & Shadows */
+  --border-width: 3px;
+  --border-main: var(--border-width) solid var(--text-main);
+  --shadow-main: 4px 4px 0px var(--text-main);
+  --shadow-hover: 6px 6px 0px var(--text-main);
+  --radius-main: 4px;
+  
+  /* Typography */
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Base utility classes for neobrutalism */
+.neo-box {
+  background-color: var(--white);
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  box-shadow: var(--shadow-main);
+  transition: all 0.2s ease-in-out;
+}
+
+.neo-box:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.section {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 3rem 1.5rem;
+  }
+}

@@ -1,0 +1,130 @@
+.navbar-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  background-color: var(--bg-primary);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-radius: 0; /* Override generic neo-box radius for navbar if needed, or keep it */
+}
+
+.navbar-brand a {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.1rem;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--text-main);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.25s ease-out;
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+.contact-link {
+  background-color: var(--accent-3);
+  padding: 0.5rem 1rem;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  box-shadow: 2px 2px 0 var(--text-main);
+}
+
+.contact-link:hover::after {
+  display: none;
+}
+.contact-link:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--text-main);
+}
+
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+}
+
+.hamburger-line {
+  width: 2rem;
+  height: 3px;
+  background: var(--text-main);
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+@media (max-width: 768px) {
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--white);
+    flex-direction: column;
+    padding: 2rem;
+    border-bottom: var(--border-main);
+    border-top: var(--border-main);
+    transform: translateY(-150%);
+    transition: transform 0.3s ease-in-out;
+    z-index: -1;
+  }
+
+  .nav-links.open {
+    transform: translateY(0);
+    box-shadow: 0 10px 0 var(--text-main);
+  }
+
+  /* Hamburger Animation */
+  .hamburger-line.open:first-child {
+    transform: rotate(45deg);
+  }
+  .hamburger-line.open:nth-child(2) {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  .hamburger-line.open:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+}

@@ -1,0 +1,36 @@
+.skills-section {
+  text-align: center;
+}
+
+.skills-section .section-title {
+  margin-bottom: 3rem;
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.skill-item {
+  padding: 1rem 2rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  transform: rotate(calc(var(--rotate, 0) * 1deg));
+  transition: transform 0.2s ease-in-out;
+}
+
+.skill-item:nth-child(odd) {
+  --rotate: -2;
+}
+.skill-item:nth-child(even) {
+  --rotate: 2;
+}
+
+.skill-item:hover {
+  --rotate: 0;
+  transform: scale(1.05) translate(-2px, -2px);
+}

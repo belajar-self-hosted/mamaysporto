@@ -1,0 +1,73 @@
+.experience-section {
+  background-color: var(--white);
+  border-top: var(--border-main);
+  border-bottom: var(--border-main);
+}
+
+.experience-section .section-title {
+  margin-bottom: 3rem;
+  background-color: var(--accent-1);
+  color: var(--white);
+  padding: 0 1rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: var(--text-main);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2.85rem;
+  top: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: var(--border-main);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exp-role {
+  font-size: 1.5rem;
+  margin-bottom: 0;
+}
+
+.exp-meta {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.exp-company {
+  color: var(--accent-1);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--text-main);
+}

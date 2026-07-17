@@ -1,0 +1,77 @@
+.projects-section {
+  /* Inherits .section padding */
+}
+
+.projects-section .section-title {
+  margin-bottom: 3rem;
+  background-color: var(--accent-3);
+  padding: 0 1rem;
+  border: var(--border-main);
+  box-shadow: 4px 4px 0 var(--text-main);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2.5rem;
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-image-wrapper {
+  border-bottom: var(--border-main);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-image {
+  transform: scale(1.05);
+}
+
+.project-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.project-title {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-desc {
+  margin-bottom: 1.5rem;
+  flex: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--text-main);
+  border-radius: var(--radius-main);
+}
+
+.project-links {
+  display: flex;
+  gap: 1rem;
+}
