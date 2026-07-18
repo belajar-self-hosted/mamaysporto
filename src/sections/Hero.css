@@ -40,6 +40,17 @@
   gap: 1rem;
 }
 
+.btn-ai {
+  background-color: #a855f7 !important;
+  color: #fff !important;
+  border-color: var(--text-main) !important;
+  box-shadow: var(--shadow-main) !important;
+}
+
+.btn-ai:hover {
+  background-color: #9333ea !important;
+}
+
 .hero-image-container {
   flex: 1;
   max-width: 400px;
