@@ -8,7 +8,7 @@ import { fetchCollection } from "../lib/api";
 
 export default function PostList() {
   // Ganti "posts" dengan nama collection Directus kamu yang sebenarnya
-  const [posts] = createResource(() => fetchCollection("posts"));
+  const [posts] = createResource(() => fetchCollection("post"));
 
   return (
     <Show when={!posts.loading} fallback={<p>Memuat data...</p>}>
