@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  web_network:
+    external: true
+
 services:
   portfolio-frontend:
     container_name: solidjs-portfolio
@@ -8,6 +12,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+    networks:
+      - web_network
     restart: unless-stopped
     # If the app needs env variables during build, they can be passed here as args, 
     # but for a static Vite app, env vars are baked in at build time.
