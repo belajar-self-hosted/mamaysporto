@@ -11,16 +11,6 @@ export const projects = [
   },
   {
     id: 2,
-    title: "Website Portofolio Pribadi",
-    description:
-      "Website portofolio pribadi sebelumnya yang pernah di-deploy di alyanadine.my.id (status saat ini sudah discontinue).",
-    image: "https://placehold.co/600x400/ff5470/0b0c10?text=Portfolio",
-    link: "https://alyanadine.my.id",
-    github: "#",
-    tags: ["Web", "Portfolio"],
-  },
-  {
-    id: 3,
     title: "Website Chatbot AI untuk Portfolio",
     description:
       "Website chatbot AI yang digunakan untuk memberikan informasi tentang biodata dan profil Fannandya Sutan Sakti Pratama (Tama) secara interaktif.",
@@ -30,7 +20,7 @@ export const projects = [
     tags: ["Web", "Portfolio"],
   },
   {
-    id: 4,
+    id: 3,
     title: "Home Server ",
     description:
       "Home server pribadi yang saya kembangkan sendiri untuk keperluan belajar dan eksperimen di bidangg DevOps, Networking, dan Web Development. Server ini saya gunakan untuk hosting beberapa aplikasi web pribadi (seperti web ini) dan eksperimen dengan berbagai teknologi menggunakan linux.",

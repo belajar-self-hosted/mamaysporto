@@ -8,16 +8,16 @@ export const experiences = [
   },
   {
     id: 2,
-    role: "Anggota Kepanitiaan & Organisasi",
-    company: "Event Kampus UMY",
-    period: "Aktif",
-    description: "Aktif berpartisipasi dalam berbagai organisasi dan kepanitiaan event kampus untuk melatih soft skill dan manajemen waktu.",
+    role: "Anggota Kepanitiaan",
+    company: "Masa Taaruf UMY (Ospek)",
+    period: "Agustus - September 2025",
+    description: "Berpartisipasi dalam kepanitiaan Ospek kampus untuk melatih soft skill dan manajemen waktu.",
   },
   {
     id: 3,
-    role: "Mahasiswa S1 Teknik Informasi (Semester 5)",
-    company: "Universitas Muhammadiyah Yogyakarta",
-    period: "Saat ini (IPK: 3.58)",
-    description: "Fokus belajar di bidang web development, optimasi AI untuk development, dan sedang mengeksplorasi mobile development.",
+    role: "Pengabdian",
+    company: "Pondok Pesantren Isy Karima",
+    period: "Juli 2023 - juli 2024",
+    description: "Mengajar dan membimbing santri mulai dari Kegiatan Belajar Mengajar (KBM) dan mendampingi para santri menghafal Al-Qur'an.",
   }
 ];
