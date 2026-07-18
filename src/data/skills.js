@@ -1,14 +1,15 @@
 export const skills = [
-  "HTML5",
-  "CSS3",
-  "JavaScript (ES6+)",
-  "SolidJS",
-  "React",
-  "Vite",
-  "Tailwind CSS",
+  "React.js",
   "Node.js",
-  "Git & GitHub",
-  "Figma",
-  "Responsive Design",
-  "Accessibility (a11y)"
+  "Next.js",
+  "PostgreSQL",
+  "JavaScript",
+  "MySQL",
+  "SQL Server",
+  "Tailwind CSS",
+  "C#",
+  "Computer Networking",
+  "Cisco & Routing",
+  "VLAN",
+  "AI Optimization"
 ];

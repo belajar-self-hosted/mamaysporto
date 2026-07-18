@@ -1,28 +1,68 @@
-## Usage
+# 🚀 SolidJS Neobrutalism Portfolio
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+Sebuah project portofolio interaktif dan modern yang dibangun dengan **SolidJS** dan desain **Neobrutalism**. Project ini tidak hanya fokus pada tampilan antarmuka yang memukau, tetapi juga dilengkapi dengan infrastruktur *DevOps* yang solid, mulai dari containerization hingga pipeline CI/CD otomatis.
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## 🛠️ Teknologi yang Digunakan
 
-## Available Scripts
+### Frontend
+- **Framework:** [SolidJS](https://www.solidjs.com/) (dipilih karena reaktivitas granularnya yang sangat cepat)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Desain Sistem:** Neobrutalism (Custom CSS)
 
-In the project directory, you can run:
+### DevOps & Infrastruktur Server
+- **Containerization:** Docker & Docker Compose (Multi-stage build dengan Nginx Alpine)
+- **CI/CD:** GitHub Actions (Self-Hosted Runner)
+- **Jaringan & Keamanan:** Cloudflare Tunnel (Zero Trust)
+- **Routing:** Nginx dikonfigurasi khusus untuk *Single Page Application* (SPA) dengan fallback ke `index.html`.
 
-### `npm run dev`
+---
 
-Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+## 🏗️ Arsitektur Infrastruktur (DevOps Setup)
 
-### `npm run build`
+Project ini berjalan di atas sebuah **Mini PC Lokal (Ubuntu)** yang telah diubah menjadi server publik skala global tanpa perlu membuka *port forwarding* pada router rumahan.
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+### Alur Kerja (Workflow)
+1. **Developer (Lokal):** Mengedit file konten di `src/data/` atau memodifikasi UI, lalu melakukan `git push` ke branch `main`.
+2. **GitHub Actions (CI/CD):** Mendeteksi perubahan dan mengirimkan perintah eksekusi ke *Self-Hosted Runner* yang berjalan di Mini PC.
+3. **Mini PC (Server):** 
+   - Mengeksekusi `.github/workflows/deploy.yml`.
+   - Melakukan build ulang Docker Image.
+   - Menjalankan container baru dan menghapus image lama (*prune*) secara otomatis.
+4. **Cloudflare Tunnel:** Container `cloudflared` yang berjalan di Mini PC menelepon keluar (outbound) ke jaringan Cloudflare, mengamankan koneksi dengan SSL/HTTPS otomatis, lalu mempublikasikannya ke internet global.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+---
 
-## Deployment
+## 💻 Cara Menjalankan Project (Lokal/Development)
 
-Learn more about deploying your application with the [documentations](https://vite.dev/guide/static-deploy.html)
+Jika Anda ingin mencoba menjalankan atau memodifikasi project ini di komputer Anda sendiri:
+
+1. **Clone repository ini:**
+   ```bash
+   git clone <URL_REPO_ANDA>
+   cd test-server
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Jalankan server development:**
+   ```bash
+   npm run dev
+   ```
+   Aplikasi akan berjalan di `http://localhost:3000`.
+
+---
+
+## 📁 Struktur Folder Utama
+
+- `/src/data/` : Tempat menyimpan data dinamis (Experience, Projects, Skills). Anda hanya perlu mengedit file di sini untuk memperbarui konten portofolio tanpa menyentuh kode UI.
+- `/src/sections/` : Kumpulan komponen halaman (Hero, About, dll).
+- `Dockerfile` : Blueprint untuk membangun container Nginx + SolidJS.
+- `docker-compose.yml` : Konfigurasi untuk menjalankan aplikasi di lingkungan production.
+- `nginx.conf` : Aturan server Nginx khusus untuk meroute SPA SolidJS.
+- `.github/workflows/deploy.yml` : Robot otomatisasi CI/CD.
+
+---
+*Dibangun dengan penuh dedikasi melalui perpaduan *Frontend Engineering* dan *DevOps Modern*.*

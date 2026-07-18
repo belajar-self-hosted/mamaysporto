@@ -8,20 +8,23 @@ export default function About() {
         <div class="about-content">
           <div class="about-text">
             <p>
-              Hello! I'm a developer who loves building things that live on the internet. My interest in web development started back in 2018 when I decided to try editing custom Tumblr themes — turns out hacking together HTML & CSS taught me a lot about HTML & CSS!
+              Halo! Asalku dari Jogja. Saat ini aku adalah mahasiswa semester 5 prodi Teknik Informasi, Fakultas Teknik di Universitas Muhammadiyah Yogyakarta (UMY). Aku punya ketertarikan besar di bidang <strong>Programming</strong> dan <strong>Web Development</strong>, serta suka mengeksplorasi hal-hal baru di dunia teknologi termasuk pengembangan Mobile App.
             </p>
             <p>
-              Fast-forward to today, and I've had the privilege of working at an advertising agency, a start-up, a huge corporation, and a student-led design studio. My main focus these days is building accessible, inclusive products and digital experiences at Upstatement for a variety of clients.
+              Selain fokus dalam Web Development (terutama Node.js, React.js, dan PostgreSQL) serta optimasi AI, aku juga memiliki skill di bidang <strong>Computer Networking</strong> (Cisco, VLAN, Routing Protocols). Bahasa yang kugunakan sehari-hari adalah Bahasa Indonesia dan Jawa, tapi aku juga bisa berbahasa Inggris!
+            </p>
+            <p>
+              Di luar perkuliahan, aku sangat menyukai olahraga, musik, dan tentunya teknologi. Oh ya, aku juga suka banget <strong>mendaki gunung</strong>! Kalo mau ngajak ndaki bisa langsung DM ke Instagramku ya, tapi jangan lupa ajak temen-temen yang lain biar makin rame!
             </p>
           </div>
           <div class="about-stats">
             <div class="stat-box neo-box">
-              <span class="stat-number">5+</span>
-              <span class="stat-label">Years of Experience</span>
+              <span class="stat-number">3.58</span>
+              <span class="stat-label">IPK Saat Ini</span>
             </div>
             <div class="stat-box neo-box">
-              <span class="stat-number">50+</span>
-              <span class="stat-label">Projects Completed</span>
+              <span class="stat-number">2+</span>
+              <span class="stat-label">Sertifikasi IT (TLab, AI Singapore)</span>
             </div>
           </div>
         </div>

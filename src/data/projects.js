@@ -1,29 +1,20 @@
 export const projects = [
   {
     id: 1,
-    title: "Awesome Project 1",
-    description: "A very cool project using SolidJS and Vite.",
-    image: "https://placehold.co/600x400/0b0c10/ffffff?text=Project+1",
+    title: "Aplikasi Desktop Manajemen Sarpras",
+    description: "Aplikasi desktop yang digunakan untuk sistem manajemen sarana dan prasarana di prodi Teknik Informasi Universitas Muhammadiyah Yogyakarta (UMY).",
+    image: "https://placehold.co/600x400/0b0c10/ffffff?text=Sarpras+App",
     link: "#",
     github: "#",
-    tags: ["SolidJS", "Vite", "Neobrutalism"]
+    tags: ["Desktop App", "Management", "UMY"]
   },
   {
     id: 2,
-    title: "Another Great App",
-    description: "This app does amazing things for users.",
-    image: "https://placehold.co/600x400/ff5470/0b0c10?text=Project+2",
-    link: "#",
+    title: "Website Portofolio Pribadi",
+    description: "Website portofolio pribadi sebelumnya yang pernah di-deploy di alyanadine.my.id (status saat ini sudah discontinue).",
+    image: "https://placehold.co/600x400/ff5470/0b0c10?text=Portfolio",
+    link: "https://alyanadine.my.id",
     github: "#",
-    tags: ["JavaScript", "CSS", "HTML"]
-  },
-  {
-    id: 3,
-    title: "Super Helpful Tool",
-    description: "A tool that increases productivity by 100%.",
-    image: "https://placehold.co/600x400/00ebc7/0b0c10?text=Project+3",
-    link: "#",
-    github: "#",
-    tags: ["Node.js", "Express", "API"]
+    tags: ["Web", "Portfolio"]
   }
 ];

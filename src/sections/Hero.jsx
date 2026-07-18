@@ -6,20 +6,20 @@ export default function Hero() {
     <section id="hero" class="section hero-section">
       <div class="hero-content">
         <h1 class="hero-title">
-          HI, I'M <span class="highlight-text">JOHN DOE</span>.<br />
-          I BUILD <span class="highlight-box">THINGS</span> FOR THE WEB.
+          HALO, AKU <span class="highlight-text">TAMA</span>.<br />
+          FULL STACK <span class="highlight-box">DEVELOPER</span>.
         </h1>
         <p class="hero-subtitle">
-          I'm a Frontend Developer passionate about creating interactive, accessible, and brutalist user experiences using SolidJS.
+          Nama lengkapku Fannandya Sutan Sakti Pratama. Seorang mahasiswa prodi Teknik Informasi UMY yang tertarik pada Web Development, Computer Networking, dan optimasi AI.
         </p>
         <div class="hero-cta">
-          <Button variant="primary" onClick={() => document.getElementById('projects').scrollIntoView()}>View My Work</Button>
-          <Button variant="default" onClick={() => document.getElementById('contact').scrollIntoView()}>Contact Me</Button>
+          <Button variant="primary" onClick={() => document.getElementById('projects').scrollIntoView()}>Lihat Projek</Button>
+          <Button variant="default" onClick={() => document.getElementById('contact').scrollIntoView()}>Hubungi Aku</Button>
         </div>
       </div>
       <div class="hero-image-container neo-box">
         {/* Placeholder for profile image */}
-        <img src="https://placehold.co/400x400/0b0c10/00ebc7?text=Profile" alt="John Doe" class="hero-image" />
+        <img src="https://placehold.co/400x400/0b0c10/00ebc7?text=Tama" alt="Fannandya Sutan Sakti Pratama" class="hero-image" />
       </div>
     </section>
   );
