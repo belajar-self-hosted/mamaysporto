@@ -178,6 +178,7 @@
 
 .chat-input {
   flex: 1;
+  min-width: 0; /* Prevent input from breaking flex layout */
   padding: 16px;
   border: 4px solid #000;
   background: #fff;
@@ -191,7 +192,7 @@
 
 .chat-input:focus {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px var(--border-color);
+  box-shadow: 2px 2px 0px #000;
 }
 
 .chat-button {
@@ -267,10 +268,48 @@
 }
 
 @media (max-width: 600px) {
+  .chat-section {
+    padding: 0;
+  }
   .chat-container {
-    height: 80vh;
+    height: 100vh;
     border-radius: 0;
     border: none;
     box-shadow: none;
+  }
+  .chat-header {
+    padding: 16px 12px;
+  }
+  .chat-header h2 {
+    font-size: 1.8rem;
+  }
+  .chat-area {
+    padding: 16px;
+  }
+  .chat-user-message {
+    margin-right: 6px;
+  }
+  .chat-empty-state p {
+    font-size: 0.95rem;
+    padding: 12px 16px;
+  }
+  .chat-suggestion-button {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  .chat-form {
+    padding: 12px;
+    gap: 10px;
+  }
+  .chat-input {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  .chat-button {
+    padding: 0 16px;
+    font-size: 1rem;
+  }
+  .chat-socials {
+    padding: 12px;
   }
 }
