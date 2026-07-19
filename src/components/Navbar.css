@@ -52,7 +52,7 @@
   transform-origin: bottom left;
 }
 
-.contact-link {
+.report-btn {
   background-color: var(--accent-3);
   padding: 0.5rem 1rem;
   border: var(--border-main);
@@ -60,10 +60,10 @@
   box-shadow: 2px 2px 0 var(--text-main);
 }
 
-.contact-link:hover::after {
+.report-btn:hover::after {
   display: none;
 }
-.contact-link:hover {
+.report-btn:hover {
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0 var(--text-main);
 }

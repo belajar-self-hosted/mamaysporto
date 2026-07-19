@@ -26,4 +26,5 @@
 .btn-primary { background-color: var(--accent-1); }
 .btn-secondary { background-color: var(--accent-2); }
 .btn-accent { background-color: var(--accent-3); }
+.btn-live { background-color: #a855f7; } /* Warna Lime Green super mencolok! */
 .btn-default { background-color: var(--white); }

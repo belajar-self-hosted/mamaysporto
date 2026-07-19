@@ -8,6 +8,12 @@ export default function Projects() {
   // Memanggil data dari collection "projects" (sesuai nama yang Anda buat di Directus)
   const [projectsData] = createResource(() => fetchCollection("projects"));
 
+  // Array warna aksen neo-brutalism dari index.css
+  const accentColors = ["var(--accent-1)", "var(--accent-2)", "var(--accent-3)"];
+
+  // Fungsi untuk mengambil warna secara acak
+  const getRandomColor = () => accentColors[Math.floor(Math.random() * accentColors.length)];
+
   return (
     <section id="projects" class="section projects-section">
       <h2 class="section-title">PROJECTS</h2>
@@ -26,7 +32,8 @@ export default function Projects() {
                   <div class="project-image-wrapper">
                     <img src={project.image} alt={project.title} loading="lazy" class="project-image" />
                   </div>
-                  <div class="project-info">
+                  {/* Memanggil fungsi random color di sini */}
+                  <div class="project-info" style={{ "background-color": getRandomColor() }}>
                     <h3 class="project-title">{project.title}</h3>
                     <p class="project-desc">{project.description}</p>
                     <div class="project-tags">
@@ -39,7 +46,7 @@ export default function Projects() {
                       {/* Tampilkan tombol Live Demo hanya jika link diisi */}
                       <Show when={project.link && project.link !== "#" && project.link !== ""}>
                         <a href={project.link} target="_blank" rel="noopener noreferrer">
-                          <Button variant="primary">Live Demo</Button>
+                          <Button variant="live">Live Demo</Button>
                         </a>
                       </Show>
                       {/* Tampilkan tombol GitHub hanya jika github diisi */}

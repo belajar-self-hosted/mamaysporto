@@ -22,7 +22,7 @@ export default function Navbar() {
     <header class="navbar-header">
       <nav class="navbar neo-box">
         <div class="navbar-brand">
-          <a href="#hero" onClick={closeMenu}><strong>PORTFOLIO</strong></a>
+          <a href="#hero" onClick={closeMenu}><strong>WEBLOG</strong></a>
         </div>
         
         <button 
@@ -41,7 +41,8 @@ export default function Navbar() {
           <li><a href="#skills" onClick={closeMenu}>Skills</a></li>
           <li><a href="#projects" onClick={closeMenu}>Projects</a></li>
           <li><a href="#experience" onClick={closeMenu}>Experience</a></li>
-          <li><a href="#contact" onClick={closeMenu} class="contact-link">Contact</a></li>
+          <li><a href="#contact" onClick={closeMenu}>Contact</a></li>
+          <li><a href="https://wa.me/6285190847766?text=halo%20admin%20saya%20ingin%20melaporkan%20bug%20yang%20terdapat%20di%20website%20mamay.my.id%20berupa:%20" onClick={closeMenu} class="report-btn">Report</a></li>
         </ul>
       </nav>
     </header>

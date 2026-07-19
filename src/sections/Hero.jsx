@@ -1,8 +1,13 @@
+import { createResource, Show } from "solid-js";
+import { fetchCollection } from "../lib/api";
 import Button from "../components/Button";
 import "./Hero.css";
 import ppTama from "../assets/ppTama.jpeg";
 
 export default function Hero() {
+  // Memanggil data dari collection "hero" (Singleton)
+  const [heroData] = createResource(() => fetchCollection("hero"));
+
   return (
     <section id="hero" class="section hero-section">
       <div class="hero-content">
@@ -10,11 +15,14 @@ export default function Hero() {
           HALO, AKU <span class="highlight-text">TAMA</span>.<br />
           JUNIOR FULL STACK <span class="highlight-box">DEVELOPER</span>.
         </h1>
-        <p class="hero-subtitle">
-          Salken! Aku seorang junior full stack developer yang bersemangat untuk
-          terus belajar dan berkembang dalam dunia teknologi, pengen tau aku
-          lebih lanjut? silahkan kunjungi asisten pribadiku .
-        </p>
+        
+        <Show when={!heroData.loading} fallback={<p class="hero-subtitle">Memuat deskripsi...</p>}>
+          <Show when={!heroData.error} fallback={<p class="hero-subtitle" style={{ color: "red" }}>Gagal memuat deskripsi.</p>}>
+            <p class="hero-subtitle">
+              {heroData().subtitle}
+            </p>
+          </Show>
+        </Show>
         <div class="hero-cta">
           <Button
             variant="primary"

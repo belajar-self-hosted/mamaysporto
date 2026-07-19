@@ -1,15 +1,18 @@
-import { createSignal } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import Button from "../components/Button";
 import "./Contact.css";
 
 export default function Contact() {
   const [formData, setFormData] = createSignal({ name: "", email: "", message: "" });
+  const [showAlert, setShowAlert] = createSignal(false);
+  const [alertMessage, setAlertMessage] = createSignal("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO: Replace with Formspree or EmailJS endpoint
     console.log("Form submitted:", formData());
-    alert("Thanks for reaching out! (This is a demo, please check the console or configure an endpoint)");
+    setAlertMessage("Terimakasih Sudah Menghubungi Saya, tapi ini hanya demo dan web ini masih dalam pengembangan jika ada saran kamu bisa tekan tombol \"Report\", terimakasih.");
+    setShowAlert(true);
     setFormData({ name: "", email: "", message: "" });
   };
 
@@ -58,6 +61,29 @@ export default function Contact() {
           <Button type="submit" variant="primary" class="submit-btn">Send Message</Button>
         </form>
       </div>
+
+      {/* Custom MessageBox Overlay */}
+      <Show when={showAlert()}>
+        <div class="modal-overlay">
+          <div class="modal-box neo-box">
+            {/* Title Bar ala Windows Form C# */}
+            <div class="modal-header">
+              <span>localhost:5173 says</span>
+              <button class="modal-close" onClick={() => setShowAlert(false)}>×</button>
+            </div>
+            
+            {/* Message Body */}
+            <div class="modal-body">
+              <p>{alertMessage()}</p>
+            </div>
+            
+            {/* Footer dengan tombol OK */}
+            <div class="modal-footer">
+              <Button variant="primary" onClick={() => setShowAlert(false)}>OK</Button>
+            </div>
+          </div>
+        </div>
+      </Show>
     </section>
   );
 }

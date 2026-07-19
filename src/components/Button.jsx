@@ -9,6 +9,7 @@ export default function Button(props) {
       case "primary": return "btn-primary";
       case "secondary": return "btn-secondary";
       case "accent": return "btn-accent";
+      case "live": return "btn-live";
       default: return "btn-default";
     }
   };
