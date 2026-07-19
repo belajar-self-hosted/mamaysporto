@@ -11,7 +11,7 @@ export default function Contact() {
     e.preventDefault();
     // TODO: Replace with Formspree or EmailJS endpoint
     console.log("Form submitted:", formData());
-    setAlertMessage("Terimakasih Sudah Menghubungi Saya, tapi ini hanya demo dan web ini masih dalam pengembangan jika ada saran kamu bisa tekan tombol \"Report\", terimakasih.");
+    setAlertMessage("Terima kasih sudah menghubungi saya! Fitur ini masih berupa demo karena website ini masih dalam tahap pengembangan. Jika kamu memiliki saran atau menemukan bug, silakan gunakan tombol \"Report\".");
     setShowAlert(true);
     setFormData({ name: "", email: "", message: "" });
   };
@@ -68,7 +68,7 @@ export default function Contact() {
           <div class="modal-box neo-box">
             {/* Title Bar ala Windows Form C# */}
             <div class="modal-header">
-              <span>localhost:5173 says</span>
+              <span>Information</span>
               <button class="modal-close" onClick={() => setShowAlert(false)}>×</button>
             </div>
             
