@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import WelcomeModal from "./components/WelcomeModal";
 import Hero from "./sections/Hero";
 import About from "./sections/About";
 import Skills from "./sections/Skills";
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <>
       <Navbar />
+      <WelcomeModal />
       <main>
         <Hero />
         <About />
