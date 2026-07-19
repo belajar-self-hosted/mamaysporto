@@ -1,0 +1,44 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Allows user to click through the icons */
+  z-index: 0; /* Keep it behind the chat interface */
+  overflow: hidden;
+}
+
+.iconBox {
+  position: absolute;
+  padding: 8px 16px;
+  font-weight: 800;
+  font-size: 14px;
+  color: #000;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  white-space: nowrap;
+  /* Neobrutalism typically has slight rotation or harsh edges */
+  transform-origin: center;
+  /* Move with random paths, rotations, and scales */
+  animation-name: floatRandom;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes floatRandom {
+  0% {
+    transform: translate(var(--start-x, -50vw), var(--start-y, 50vh)) rotate(var(--start-rot, -5deg)) scale(var(--scale, 1));
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--end-x, 50vw), var(--end-y, -50vh)) rotate(var(--end-rot, 5deg)) scale(var(--scale, 1));
+    opacity: 0;
+  }
+}

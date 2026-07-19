@@ -15,5 +15,23 @@ services:
     networks:
       - web_network
     restart: unless-stopped
-    # If the app needs env variables during build, they can be passed here as args, 
-    # but for a static Vite app, env vars are baked in at build time.
+    depends_on:
+      portfolio-backend:
+        condition: service_healthy
+
+  portfolio-backend:
+    container_name: solidjs-portfolio-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    networks:
+      - web_network
+    restart: unless-stopped
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', r => process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

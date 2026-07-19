@@ -42,7 +42,7 @@ Berikut adalah daftar port yang aktif di dalam Mini PC:
 ### B. Containerization (Docker)
 Aplikasi dibungkus menggunakan Docker agar environment-nya konsisten.
 *   **Multi-stage Build (`Dockerfile`):**
-    *   *Tahap 1 (Build):* Menggunakan `node:18-alpine` untuk melakukan `npm ci` dan `npm run build`.
+    *   *Tahap 1 (Build):* Menggunakan `node:20-alpine` untuk melakukan `npm ci` dan `npm run build`.
     *   *Tahap 2 (Serve):* Menggunakan `nginx:alpine` yang sangat ringan. File hasil build dari tahap 1 disalin ke dalam folder html Nginx.
 *   **Nginx Config (`nginx.conf`):** Aturan `try_files $uri $uri/ /index.html;` disuntikkan ke dalam container agar *Single Page Application* (SPA) tidak mengalami *Error 404* saat pengguna me-refresh halaman.
 *   **Docker Ignore (`.dockerignore`):** Mengabaikan folder `node_modules` bawaan sistem host agar tidak merusak instalasi bersih di dalam container Docker.

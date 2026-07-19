@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@ai-sdk/solid": "^1.2.13",
     "solid-js": "^1.9.13"
   },
   "devDependencies": {

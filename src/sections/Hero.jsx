@@ -28,20 +28,20 @@ export default function Hero() {
             variant="primary"
             onClick={() => document.getElementById("projects").scrollIntoView()}
           >
-            Lihat Projek
+            View Projects
           </Button>
           <Button
             variant="default"
             onClick={() => document.getElementById("contact").scrollIntoView()}
           >
-            Hubungi Aku
+            Contact Me
           </Button>
           <Button
             variant="default"
             class="btn-ai"
             onClick={() => window.open("https://aspriguatuh.my.id", "_blank")}
           >
-            Asisten Pribadi
+            YOWMAN
           </Button>
         </div>
       </div>
