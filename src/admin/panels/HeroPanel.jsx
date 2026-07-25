@@ -1,17 +1,34 @@
 import { createResource, createSignal, createEffect, Show } from "solid-js";
-import { fetchCollection, updateSingleton } from "../../lib/api";
+import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 
 export default function HeroPanel() {
   const [hero, { refetch }] = createResource(() => fetchCollection("hero"));
   const [form, setForm] = createSignal(null);
   const [status, setStatus] = createSignal({ type: "", message: "" });
   const [saving, setSaving] = createSignal(false);
+  const [uploading, setUploading] = createSignal(false);
 
   createEffect(() => {
     if (hero() && !form()) setForm({ ...hero() });
   });
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setStatus({ type: "", message: "" });
+    try {
+      const url = await uploadSiteImage(file);
+      setForm({ ...form(), image: url });
+    } catch (err) {
+      setStatus({ type: "error", message: err.message });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +51,15 @@ export default function HeroPanel() {
       <h2>Hero Section</h2>
       <Show when={form()} fallback={<p>Memuat...</p>}>
         <form class="admin-form" onSubmit={handleSubmit}>
+          <div class="admin-form-group">
+            <label>Foto Profil (rasio mengikuti gambar yang diupload, maks 1 MB)</label>
+            <Show when={form().image}>
+              <img src={form().image} alt="preview" class="admin-hero-image-preview" />
+            </Show>
+            <input type="file" accept="image/*" onChange={handleFile} disabled={uploading()} />
+            {uploading() && <p class="admin-hint">Mengupload...</p>}
+          </div>
+
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Sapaan (mis. "HALO, AKU")</label>
@@ -83,7 +109,7 @@ export default function HeroPanel() {
             <p class={status().type === "error" ? "admin-error" : "admin-success"}>{status().message}</p>
           </Show>
 
-          <button type="submit" class="neo-btn btn-primary" disabled={saving()}>
+          <button type="submit" class="neo-btn btn-primary" disabled={saving() || uploading()}>
             {saving() ? "Menyimpan..." : "Simpan"}
           </button>
         </form>

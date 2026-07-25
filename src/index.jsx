@@ -4,6 +4,7 @@ import { createSignal, onCleanup, onMount, Show } from 'solid-js'
 import './index.css'
 import App from './App.jsx'
 import AdminRoot from './admin/AdminRoot.jsx'
+import SiteMeta from './components/SiteMeta.jsx'
 
 function Root() {
   const [isAdmin, setIsAdmin] = createSignal(window.location.hash.startsWith('#/admin'))
@@ -16,9 +17,12 @@ function Root() {
   })
 
   return (
-    <Show when={isAdmin()} fallback={<App />}>
-      <AdminRoot />
-    </Show>
+    <>
+      <SiteMeta />
+      <Show when={isAdmin()} fallback={<App />}>
+        <AdminRoot />
+      </Show>
+    </>
   )
 }
 

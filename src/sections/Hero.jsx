@@ -46,7 +46,7 @@ export default function Hero() {
       </div>
       <div class="hero-image-container neo-box">
         <img
-          src={ppTama}
+          src={heroData()?.image || ppTama}
           alt="Fannandya Sutan Sakti Pratama"
           class="hero-image"
         />

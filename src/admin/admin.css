@@ -208,6 +208,26 @@
   margin-bottom: 0.5rem;
 }
 
+.admin-favicon-preview {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  margin-bottom: 0.5rem;
+  background-color: var(--bg-primary);
+}
+
+.admin-hero-image-preview {
+  display: block;
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  margin-bottom: 0.5rem;
+}
+
 .admin-textarea-large {
   font-family: monospace;
   font-size: 0.85rem;

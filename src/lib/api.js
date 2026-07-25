@@ -70,8 +70,8 @@ export async function deleteRow(table, id) {
 
 const MAX_IMAGE_BYTES = 1024 * 1024; // 1MB
 
-/** Upload gambar project ke Supabase Storage (bucket project-images, max 1MB). */
-export async function uploadProjectImage(file) {
+/** Upload gambar ke sebuah bucket Supabase Storage (max 1MB), lalu kembalikan public URL-nya. */
+async function uploadImage(bucket, file) {
   if (!file) throw new Error("File tidak ditemukan.");
   if (file.size > MAX_IMAGE_BYTES) {
     throw new Error("Ukuran gambar maksimal 1 MB.");
@@ -81,11 +81,21 @@ export async function uploadProjectImage(file) {
   const path = `${crypto.randomUUID()}.${ext}`;
 
   const { error: uploadError } = await supabase.storage
-    .from("project-images")
+    .from(bucket)
     .upload(path, file, { cacheControl: "3600", upsert: false });
 
   if (uploadError) throw new Error(`Gagal upload gambar: ${uploadError.message}`);
 
-  const { data } = supabase.storage.from("project-images").getPublicUrl(path);
+  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
+}
+
+/** Upload gambar project ke Supabase Storage (bucket project-images, max 1MB). */
+export function uploadProjectImage(file) {
+  return uploadImage("project-images", file);
+}
+
+/** Upload gambar situs (mis. foto Hero) ke Supabase Storage (bucket site-images, max 1MB). */
+export function uploadSiteImage(file) {
+  return uploadImage("site-images", file);
 }

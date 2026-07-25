@@ -1,17 +1,34 @@
 import { createResource, createSignal, createEffect, Show } from "solid-js";
-import { fetchCollection, updateSingleton } from "../../lib/api";
+import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 
 export default function SiteSettingsPanel() {
   const [settings, { refetch }] = createResource(() => fetchCollection("site_settings"));
   const [form, setForm] = createSignal(null);
   const [status, setStatus] = createSignal({ type: "", message: "" });
   const [saving, setSaving] = createSignal(false);
+  const [uploading, setUploading] = createSignal(false);
 
   createEffect(() => {
     if (settings() && !form()) setForm({ ...settings() });
   });
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+
+  const handleFaviconFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setStatus({ type: "", message: "" });
+    try {
+      const url = await uploadSiteImage(file);
+      setForm({ ...form(), favicon_url: url });
+    } catch (err) {
+      setStatus({ type: "error", message: err.message });
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +51,20 @@ export default function SiteSettingsPanel() {
       <h2>Site Settings</h2>
       <Show when={form()} fallback={<p>Memuat...</p>}>
         <form class="admin-form" onSubmit={handleSubmit}>
+          <h3>Browser Tab</h3>
+          <div class="admin-form-group">
+            <label>Judul Tab Browser</label>
+            <input class="neo-input" value={form().site_title} onInput={update("site_title")} />
+          </div>
+          <div class="admin-form-group">
+            <label>Favicon (ikon di tab browser, maks 1 MB)</label>
+            <Show when={form().favicon_url}>
+              <img src={form().favicon_url} alt="favicon preview" class="admin-favicon-preview" />
+            </Show>
+            <input type="file" accept="image/*" onChange={handleFaviconFile} disabled={uploading()} />
+            {uploading() && <p class="admin-hint">Mengupload...</p>}
+          </div>
+
           <h3>Navbar & Footer</h3>
           <div class="admin-form-row">
             <div class="admin-form-group">
@@ -92,7 +123,7 @@ export default function SiteSettingsPanel() {
             <p class={status().type === "error" ? "admin-error" : "admin-success"}>{status().message}</p>
           </Show>
 
-          <button type="submit" class="neo-btn btn-primary" disabled={saving()}>
+          <button type="submit" class="neo-btn btn-primary" disabled={saving() || uploading()}>
             {saving() ? "Menyimpan..." : "Simpan"}
           </button>
         </form>
