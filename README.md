@@ -74,6 +74,7 @@ Sebuah project portofolio interaktif dan modern yang dibangun dengan **SolidJS**
 3. Jalankan `supabase/cms_admin_setup.sql` (setelah schema.sql) untuk menambahkan kolom Hero/CTA tambahan, tabel `site_settings`, policy tulis khusus admin, dan storage bucket `project-images`.
 3b. Jalankan `supabase/hero_image_upload.sql` (setelah cms_admin_setup.sql) untuk menambahkan kolom `image` di Hero dan storage bucket `site-images` (foto profil Hero yang bisa diupload lewat admin panel).
 3c. Jalankan `supabase/site_meta_title_favicon.sql` (setelah hero_image_upload.sql) untuk menambahkan kolom `site_title` dan `favicon_url` di `site_settings` (judul tab browser & favicon).
+3d. Jalankan `supabase/social_links_dynamic.sql` (setelah site_meta_title_favicon.sql) untuk mengganti field social link tetap dengan kolom `social_links` (jsonb, list dinamis).
 4. Buat 1 akun admin lewat **Supabase Dashboard > Authentication > Users > Add User** (email + password). Akun ini dipakai untuk login ke CMS. Jangan aktifkan public sign-up.
 5. Isi/edit data portfolio (hero, about, skills, projects, experience, site settings, AI prompt) lewat **CMS Admin Panel** di aplikasi (lihat di bawah), bukan lewat Table Editor.
 
@@ -91,7 +92,7 @@ Semua konten website (Hero, About, Skills, Projects, Experience, Navbar/Footer, 
   - **Skills** — tambah/edit/hapus skill
   - **Projects** — tambah/edit/hapus project, upload gambar langsung ke Supabase Storage (maks 1 MB) atau paste URL, kelola tags/link
   - **Experience** — tambah/edit/hapus riwayat pengalaman
-  - **Site Settings** — judul tab browser & favicon, brand navbar, nama & social link footer, judul/deskripsi Contact, link WhatsApp "Report", serta system prompt AI chatbot Yowman
+  - **Site Settings** — judul tab browser & favicon, brand navbar & nama footer, **social media links (bebas tambah/hapus, ikon otomatis menyesuaikan platform dari URL yang dimasukkan — GitHub, LinkedIn, Instagram, X/Twitter, Facebook, YouTube, TikTok, WhatsApp, Telegram, Email, dll)**, judul/deskripsi Contact, link WhatsApp "Report", serta system prompt AI chatbot Yowman
 - Perubahan tersimpan langsung ke Supabase dan otomatis tampil di halaman publik setelah reload (tanpa perlu deploy ulang).
 
 ---

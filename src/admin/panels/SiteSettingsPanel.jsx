@@ -1,6 +1,7 @@
-import { createResource, createSignal, createEffect, Show } from "solid-js";
+import { createResource, createSignal, createEffect, For, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 import { normalizeUrl } from "../../lib/url";
+import SocialIcon, { platformLabel } from "../../lib/socialIcons.jsx";
 
 export default function SiteSettingsPanel() {
   const [settings, { refetch }] = createResource(() => fetchCollection("site_settings"));
@@ -14,6 +15,21 @@ export default function SiteSettingsPanel() {
   });
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+
+  const addSocialLink = () => {
+    setForm({ ...form(), social_links: [...(form().social_links || []), { url: "" }] });
+  };
+
+  const updateSocialLink = (index, value) => {
+    const links = [...(form().social_links || [])];
+    links[index] = { url: value };
+    setForm({ ...form(), social_links: links });
+  };
+
+  const removeSocialLink = (index) => {
+    const links = (form().social_links || []).filter((_, i) => i !== index);
+    setForm({ ...form(), social_links: links });
+  };
 
   const handleFaviconFile = async (e) => {
     const file = e.target.files?.[0];
@@ -37,10 +53,9 @@ export default function SiteSettingsPanel() {
     setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
-      patch.footer_github = normalizeUrl(patch.footer_github);
-      patch.footer_linkedin = normalizeUrl(patch.footer_linkedin);
-      patch.footer_instagram = normalizeUrl(patch.footer_instagram);
-      patch.report_whatsapp_link = normalizeUrl(patch.report_whatsapp_link);
+      patch.social_links = (patch.social_links || [])
+        .map((link) => ({ url: normalizeUrl(link.url) }))
+        .filter((link) => link.url && link.url !== "#");
       await updateSingleton("site_settings", patch);
       setStatus({ type: "success", message: "Tersimpan." });
       refetch();
@@ -81,19 +96,37 @@ export default function SiteSettingsPanel() {
               <input class="neo-input" value={form().footer_name} onInput={update("footer_name")} />
             </div>
           </div>
-          <div class="admin-form-row">
-            <div class="admin-form-group">
-              <label>GitHub URL</label>
-              <input class="neo-input" value={form().footer_github} onInput={update("footer_github")} />
-            </div>
-            <div class="admin-form-group">
-              <label>LinkedIn URL</label>
-              <input class="neo-input" value={form().footer_linkedin} onInput={update("footer_linkedin")} />
-            </div>
-          </div>
           <div class="admin-form-group">
-            <label>Instagram URL</label>
-            <input class="neo-input" value={form().footer_instagram} onInput={update("footer_instagram")} />
+            <label>Social Media Links</label>
+            <p class="admin-hint">
+              Tambahkan link sosial media apa saja (GitHub, LinkedIn, Instagram, TikTok, YouTube, dll). Ikon di homepage otomatis menyesuaikan berdasarkan URL yang kamu masukkan.
+            </p>
+            <div class="admin-social-list">
+              <For each={form().social_links || []}>
+                {(link, index) => (
+                  <div class="admin-social-row">
+                    <span class="admin-social-icon"><SocialIcon url={link.url} size={20} /></span>
+                    <input
+                      class="neo-input"
+                      placeholder="https://..."
+                      value={link.url}
+                      onInput={(e) => updateSocialLink(index(), e.target.value)}
+                    />
+                    <span class="admin-social-platform">{platformLabel(link.url)}</span>
+                    <button
+                      type="button"
+                      class="neo-btn btn-accent"
+                      onClick={() => removeSocialLink(index())}
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                )}
+              </For>
+            </div>
+            <button type="button" class="neo-btn btn-default admin-add-toggle" onClick={addSocialLink}>
+              + Tambah Social Media
+            </button>
           </div>
 
           <h3>Contact Section</h3>
@@ -105,10 +138,29 @@ export default function SiteSettingsPanel() {
             <label>Deskripsi Contact</label>
             <textarea class="neo-input" rows="2" value={form().contact_desc} onInput={update("contact_desc")} />
           </div>
-          <div class="admin-form-group">
-            <label>Link "Report" (WhatsApp)</label>
-            <input class="neo-input" value={form().report_whatsapp_link} onInput={update("report_whatsapp_link")} />
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label>Nomor WhatsApp (tombol "Report")</label>
+              <input
+                class="neo-input"
+                placeholder="628xxxxxxxxxx"
+                value={form().report_whatsapp_number}
+                onInput={update("report_whatsapp_number")}
+              />
+            </div>
+            <div class="admin-form-group">
+              <label>Pesan Default (Report)</label>
+              <input
+                class="neo-input"
+                placeholder="Halo admin, saya ingin melaporkan..."
+                value={form().report_whatsapp_message}
+                onInput={update("report_whatsapp_message")}
+              />
+            </div>
           </div>
+          <p class="admin-hint">
+            Kalau pengunjung klik tombol "Report" di navbar, WhatsApp akan terbuka ke nomor ini dengan pesan default di atas sudah terisi otomatis.
+          </p>
 
           <h3>AI Chat (Yowman) System Prompt</h3>
           <div class="admin-form-group">

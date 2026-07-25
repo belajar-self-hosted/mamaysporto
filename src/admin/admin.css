@@ -197,6 +197,42 @@
   margin-bottom: 1.25rem;
 }
 
+.admin-social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.admin-social-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-social-icon {
+  flex-shrink: 0;
+  display: flex;
+  color: var(--text-main);
+}
+
+.admin-social-platform {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: #666;
+  min-width: 80px;
+}
+
+@media (max-width: 640px) {
+  .admin-social-row {
+    flex-wrap: wrap;
+  }
+  .admin-social-row input {
+    flex: 1 1 100%;
+    order: 1;
+  }
+}
+
 .admin-item-row {
   display: flex;
   align-items: center;
