@@ -51,9 +51,13 @@ export async function insertRow(table, row) {
 
 /** Update row collection table berdasarkan id. Butuh sesi admin login. */
 export async function updateRow(table, id, patch) {
+  // Buang id/created_at kalau ikut terbawa dari form (mis. hasil spread row lama) —
+  // "id" adalah generated identity column, Postgres menolak kalau di-SET manual.
+  const { id: _id, created_at: _createdAt, ...safePatch } = patch;
+
   const { data, error } = await supabase
     .from(table)
-    .update(patch)
+    .update(safePatch)
     .eq("id", id)
     .select()
     .single();
