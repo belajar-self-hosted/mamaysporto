@@ -13,6 +13,7 @@ export default function ChatAI() {
     error,
   } = useChat({
     api: "/api/chat",
+    streamProtocol: "text",
   });
 
   let chatAreaRef;

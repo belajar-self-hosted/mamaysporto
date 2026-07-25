@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node --env-file=.env dev-server.js\"",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint ."
@@ -17,6 +17,7 @@
     "solid-js": "^1.9.13"
   },
   "devDependencies": {
+    "concurrently": "^10.0.4",
     "eslint": "^9.39.5",
     "eslint-plugin-solid": "^0.14.5",
     "prettier": "^3.9.5",

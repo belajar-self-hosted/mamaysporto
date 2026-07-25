@@ -11,39 +11,38 @@ export default function Hero() {
   return (
     <section id="hero" class="section hero-section">
       <div class="hero-content">
-        <h1 class="hero-title">
-          HALO, AKU <span class="highlight-text">TAMA</span>.<br />
-          JUNIOR FULL STACK <span class="highlight-box">DEVELOPER</span>.
-        </h1>
-        
-        <Show when={!heroData.loading} fallback={<p class="hero-subtitle">Memuat deskripsi...</p>}>
-          <Show when={!heroData.error} fallback={<p class="hero-subtitle" style={{ color: "red" }}>Gagal memuat deskripsi.</p>}>
+        <Show when={!heroData.loading} fallback={<h1 class="hero-title">Memuat...</h1>}>
+          <Show when={!heroData.error} fallback={<h1 class="hero-title">Gagal memuat data.</h1>}>
+            <h1 class="hero-title">
+              {heroData().greeting} <span class="highlight-text">{heroData().display_name}</span>.<br />
+              {heroData().role_prefix} <span class="highlight-box">{heroData().role_highlight}</span>.
+            </h1>
             <p class="hero-subtitle">
               {heroData().subtitle}
             </p>
+            <div class="hero-cta">
+              <Button
+                variant="primary"
+                onClick={() => document.getElementById("projects").scrollIntoView()}
+              >
+                {heroData().cta_projects_label}
+              </Button>
+              <Button
+                variant="default"
+                onClick={() => document.getElementById("contact").scrollIntoView()}
+              >
+                {heroData().cta_contact_label}
+              </Button>
+              <Button
+                variant="default"
+                class="btn-ai"
+                onClick={() => window.open(heroData().cta_yowman_link, "_blank")}
+              >
+                {heroData().cta_yowman_label}
+              </Button>
+            </div>
           </Show>
         </Show>
-        <div class="hero-cta">
-          <Button
-            variant="primary"
-            onClick={() => document.getElementById("projects").scrollIntoView()}
-          >
-            View Projects
-          </Button>
-          <Button
-            variant="default"
-            onClick={() => document.getElementById("contact").scrollIntoView()}
-          >
-            Contact Me
-          </Button>
-          <Button
-            variant="default"
-            class="btn-ai"
-            onClick={() => window.open("https://aspriguatuh.my.id", "_blank")}
-          >
-            YOWMAN
-          </Button>
-        </div>
       </div>
       <div class="hero-image-container neo-box">
         <img

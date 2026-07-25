@@ -1,8 +1,10 @@
-import { createSignal, Show } from "solid-js";
+import { createResource, createSignal, Show } from "solid-js";
+import { fetchCollection } from "../lib/api";
 import Button from "../components/Button";
 import "./Contact.css";
 
 export default function Contact() {
+  const [settings] = createResource(() => fetchCollection("site_settings"));
   const [formData, setFormData] = createSignal({ name: "", email: "", message: "" });
   const [showAlert, setShowAlert] = createSignal(false);
   const [alertMessage, setAlertMessage] = createSignal("");
@@ -19,9 +21,9 @@ export default function Contact() {
   return (
     <section id="contact" class="section contact-section">
       <div class="contact-container neo-box">
-        <h2 class="section-title">GET IN TOUCH</h2>
+        <h2 class="section-title">{settings()?.contact_title || "GET IN TOUCH"}</h2>
         <p class="contact-desc">
-          Whether you have a question, a project idea, or just want to say hi, my inbox is always open.
+          {settings()?.contact_desc || "Whether you have a question, a project idea, or just want to say hi, my inbox is always open."}
         </p>
         
         <form class="contact-form" onSubmit={handleSubmit}>

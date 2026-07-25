@@ -1,45 +1,29 @@
-# 🚀 SolidJS Neobrutalism Portfolio
+# SolidJS Neobrutalism Portfolio
 
-Sebuah project portofolio interaktif dan modern yang dibangun dengan **SolidJS** dan desain **Neobrutalism**. Project ini tidak hanya fokus pada tampilan antarmuka yang memukau, tetapi juga dilengkapi dengan infrastruktur *DevOps* yang solid, mulai dari containerization hingga pipeline CI/CD otomatis.
+Sebuah project portofolio interaktif dan modern yang dibangun dengan **SolidJS** dan desain **Neobrutalism**. Dilengkapi dengan AI Chat Assistant yang didukung oleh Google Gemini via OpenRouter, serta CMS berbasis Supabase untuk manajemen konten yang dinamis.
 
-## 🛠️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 ### Frontend
-- **Framework:** [SolidJS](https://www.solidjs.com/) (dipilih karena reaktivitas granularnya yang sangat cepat)
+- **Framework:** [SolidJS](https://www.solidjs.com/)
 - **Build Tool:** [Vite](https://vitejs.dev/)
 - **Desain Sistem:** Neobrutalism (Custom CSS)
 
-### DevOps & Infrastruktur Server
-- **Containerization:** Docker & Docker Compose (Multi-stage build dengan Nginx Alpine)
-- **CI/CD:** GitHub Actions (Self-Hosted Runner)
-- **Jaringan & Keamanan:** Cloudflare Tunnel (Zero Trust)
-- **Routing:** Nginx dikonfigurasi khusus untuk *Single Page Application* (SPA) dengan fallback ke `index.html`.
+### Backend (Serverless)
+- **Runtime:** [Vercel Serverless Functions](https://vercel.com/docs/functions)
+- **AI:** [OpenRouter](https://openrouter.ai/) (Google Gemini 2.5 Flash Lite) via [Vercel AI SDK](https://sdk.vercel.ai)
+
+### Database / CMS
+- **Database:** [Supabase](https://supabase.com/) (PostgreSQL) — menyimpan data portfolio (hero, about, skills, projects, experience)
 
 ---
 
-## 🏗️ Arsitektur Infrastruktur (DevOps Setup)
+## Cara Menjalankan Project (Lokal)
 
-Project ini berjalan di atas sebuah **Mini PC Lokal (Ubuntu)** yang telah diubah menjadi server publik skala global tanpa perlu membuka *port forwarding* pada router rumahan.
-
-### Alur Kerja (Workflow)
-1. **Developer (Lokal):** Mengedit file konten di `src/data/` atau memodifikasi UI, lalu melakukan `git push` ke branch `main`.
-2. **GitHub Actions (CI/CD):** Mendeteksi perubahan dan mengirimkan perintah eksekusi ke *Self-Hosted Runner* yang berjalan di Mini PC.
-3. **Mini PC (Server):** 
-   - Mengeksekusi `.github/workflows/deploy.yml`.
-   - Melakukan build ulang Docker Image.
-   - Menjalankan container baru dan menghapus image lama (*prune*) secara otomatis.
-4. **Cloudflare Tunnel:** Container `cloudflared` yang berjalan di Mini PC menelepon keluar (outbound) ke jaringan Cloudflare, mengamankan koneksi dengan SSL/HTTPS otomatis, lalu mempublikasikannya ke internet global.
-
----
-
-## 💻 Cara Menjalankan Project (Lokal/Development)
-
-Jika Anda ingin mencoba menjalankan atau memodifikasi project ini di komputer Anda sendiri:
-
-1. **Clone repository ini:**
+1. **Clone repository:**
    ```bash
    git clone <URL_REPO_ANDA>
-   cd test-server
+   cd mamaysporto
    ```
 
 2. **Install dependencies:**
@@ -47,22 +31,79 @@ Jika Anda ingin mencoba menjalankan atau memodifikasi project ini di komputer An
    npm install
    ```
 
-3. **Jalankan server development:**
+3. **Buat file `.env` dari `.env.example`:**
+   ```bash
+   cp .env.example .env
+   ```
+   Isi variabel-variabel di dalamnya (lihat bagian Environment Variables).
+
+4. **Jalankan server development:**
    ```bash
    npm run dev
    ```
-   Aplikasi akan berjalan di `http://localhost:3000`.
+   Aplikasi berjalan di `http://localhost:3333`.
 
 ---
 
-## 📁 Struktur Folder Utama
+## Deploy ke Vercel
 
-- `/src/data/` : Tempat menyimpan data dinamis (Experience, Projects, Skills). Anda hanya perlu mengedit file di sini untuk memperbarui konten portofolio tanpa menyentuh kode UI.
-- `/src/sections/` : Kumpulan komponen halaman (Hero, About, dll).
-- `Dockerfile` : Blueprint untuk membangun container Nginx + SolidJS.
-- `docker-compose.yml` : Konfigurasi untuk menjalankan aplikasi di lingkungan production.
-- `nginx.conf` : Aturan server Nginx khusus untuk meroute SPA SolidJS.
-- `.github/workflows/deploy.yml` : Robot otomatisasi CI/CD.
+1. **Push repository ke GitHub/GitLab/Bitbucket.**
+2. **Import project di [Vercel Dashboard](https://vercel.com/dashboard).**
+3. **Set Environment Variables di Vercel:**
+   - `OPENROUTER_API_KEY` — API key dari OpenRouter
+   - `VITE_SUPABASE_URL` — URL project Supabase
+   - `VITE_SUPABASE_ANON_KEY` — Anon key Supabase
+4. **Deploy.** Vercel akan otomatis build dan deploy setiap push ke branch utama.
 
 ---
-*Dibangun dengan penuh dedikasi melalui perpaduan *Frontend Engineering* dan *DevOps Modern*.*
+
+## Environment Variables
+
+| Variable | Keterangan | Lokasi |
+|---|---|---|
+| `OPENROUTER_API_KEY` | API key untuk AI Chat (server-side only) | Vercel Dashboard |
+| `VITE_SUPABASE_URL` | URL project Supabase | Vercel Dashboard |
+| `VITE_SUPABASE_ANON_KEY` | Anon key Supabase | Vercel Dashboard |
+
+---
+
+## Setup Supabase
+
+1. Buat project baru di [Supabase](https://supabase.com).
+2. Jalankan SQL script di `supabase/schema.sql` melalui **Supabase Dashboard > SQL Editor**.
+3. Jalankan `supabase/cms_admin_setup.sql` (setelah schema.sql) untuk menambahkan kolom Hero/CTA tambahan, tabel `site_settings`, policy tulis khusus admin, dan storage bucket `project-images`.
+4. Buat 1 akun admin lewat **Supabase Dashboard > Authentication > Users > Add User** (email + password). Akun ini dipakai untuk login ke CMS. Jangan aktifkan public sign-up.
+5. Isi/edit data portfolio (hero, about, skills, projects, experience, site settings, AI prompt) lewat **CMS Admin Panel** di aplikasi (lihat di bawah), bukan lewat Table Editor.
+
+---
+
+## CMS Admin Panel
+
+Semua konten website (Hero, About, Skills, Projects, Experience, Navbar/Footer, Contact, hingga system prompt AI chat "Yowman") dikelola lewat halaman admin bawaan, tanpa perlu redeploy.
+
+- **URL:** `/#/admin` (mis. `http://localhost:3333/#/admin` atau `https://domain-kamu.com/#/admin`)
+- **Login:** gunakan akun yang dibuat di langkah Setup Supabase #4 (Supabase Auth, email + password).
+- **Fitur per tab:**
+  - **Hero** — sapaan, nama, judul role, subtitle, label & link tombol CTA
+  - **About** — konten (boleh HTML sederhana seperti `<strong>`) + 3 statistik
+  - **Skills** — tambah/edit/hapus skill
+  - **Projects** — tambah/edit/hapus project, upload gambar langsung ke Supabase Storage (maks 1 MB) atau paste URL, kelola tags/link
+  - **Experience** — tambah/edit/hapus riwayat pengalaman
+  - **Site Settings** — brand navbar, nama & social link footer, judul/deskripsi Contact, link WhatsApp "Report", serta system prompt AI chatbot Yowman
+- Perubahan tersimpan langsung ke Supabase dan otomatis tampil di halaman publik setelah reload (tanpa perlu deploy ulang).
+
+---
+
+## Struktur Folder
+
+- `/src/` — Source code SolidJS
+  - `/src/sections/` — Komponen halaman publik (Hero, About, Skills, Projects, Experience, Contact)
+  - `/src/admin/` — CMS Admin Panel (`/#/admin`): login, layout, dan panel per section
+  - `/src/lib/` — Helper functions (API read/write, Supabase client, auth)
+- `/api/` — Vercel Serverless Functions (AI Chat endpoint)
+- `/supabase/` — SQL schema & migration untuk Supabase
+- `/public/` — Static assets
+
+---
+
+*Dibangun dengan SolidJS + Vercel + Supabase.*

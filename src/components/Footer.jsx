@@ -1,17 +1,20 @@
+import { createResource } from "solid-js";
+import { fetchCollection } from "../lib/api";
 import "./Footer.css";
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  
+  const [settings] = createResource(() => fetchCollection("site_settings"));
+
   return (
     <footer class="footer neo-box">
       <div class="footer-content">
         <div class="footer-logo">
-          <strong>FANNANDYA.</strong>
+          <strong>{settings()?.footer_name || "FANNANDYA."}</strong>
         </div>
         <div class="footer-social">
           <a
-            href="https://github.com/fannandya"
+            href={settings()?.footer_github || "#"}
             class="social-link neo-box"
             aria-label="GitHub"
           >
@@ -20,7 +23,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href="https://www.linkedin.com/in/fannandya-sutan-2538a831b?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+            href={settings()?.footer_linkedin || "#"}
             class="social-link neo-box"
             aria-label="LinkedIn"
           >
@@ -29,7 +32,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href="https://instagram.com/sutanfannandya"
+            href={settings()?.footer_instagram || "#"}
             class="social-link neo-box"
             aria-label="Instagram"
           >
