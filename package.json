@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ai-sdk/solid": "^1.2.13",
+    "@openrouter/ai-sdk-provider": "^3.0.0",
+    "@supabase/supabase-js": "^2.50.0",
+    "ai": "^7.0.0",
     "solid-js": "^1.9.13"
   },
   "devDependencies": {
@@ -19,5 +22,8 @@
     "prettier": "^3.9.5",
     "vite": "^8.1.1",
     "vite-plugin-solid": "^2.11.12"
+  },
+  "overrides": {
+    "brace-expansion": ">=5.0.7"
   }
 }

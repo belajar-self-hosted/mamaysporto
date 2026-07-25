@@ -1,22 +1,26 @@
-// src/lib/api.js
-//
-// Karena Nginx men-serve frontend DAN mem-proxy /api di origin yang sama
-// (satu domain, satu port dari sudut pandang browser), fetch bisa pakai
-// path relatif "/api/..." tanpa perlu konfigurasi CORS tambahan di Directus.
-
-const API_BASE = "/api";
+import { supabase } from "./supabase";
 
 /**
- * Ambil semua item dari sebuah collection Directus.
- * Ganti "posts" dengan nama collection kamu yang sebenarnya di Directus.
+ * Ambil semua item dari sebuah tabel Supabase.
+ * Signature tetap sama agar section components tidak perlu diubah.
+ *
+ * Singleton tables (hero, about) mengembalikan object langsung.
+ * Collection tables (skills, projects, experience) mengembalikan array.
  */
 export async function fetchCollection(collectionName) {
-  const res = await fetch(`${API_BASE}/items/${collectionName}`);
+  const { data, error } = await supabase
+    .from(collectionName)
+    .select("*");
 
-  if (!res.ok) {
-    throw new Error(`Gagal mengambil data "${collectionName}": HTTP ${res.status}`);
+  if (error) {
+    throw new Error(`Gagal mengambil data "${collectionName}": ${error.message}`);
   }
 
-  const json = await res.json();
-  return json.data; // Directus selalu membungkus hasil dalam { data: [...] }
+  // Singleton tables: return object (ambil row pertama)
+  if (collectionName === "hero" || collectionName === "about") {
+    return data && data.length > 0 ? data[0] : null;
+  }
+
+  // Collection tables: return array
+  return data || [];
 }

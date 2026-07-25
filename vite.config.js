@@ -11,11 +11,6 @@ export default defineConfig({
         target: "http://localhost:3001",
         changeOrigin: true,
       },
-      "/api": {
-        target: process.env.VITE_API_URL || "http://100.69.196.46:8080",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
     },
   },
 });
