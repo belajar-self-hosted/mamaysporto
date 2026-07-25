@@ -1,5 +1,6 @@
 import { createResource, createSignal, createEffect, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
+import { normalizeUrl } from "../../lib/url";
 
 export default function SiteSettingsPanel() {
   const [settings, { refetch }] = createResource(() => fetchCollection("site_settings"));
@@ -36,6 +37,10 @@ export default function SiteSettingsPanel() {
     setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
+      patch.footer_github = normalizeUrl(patch.footer_github);
+      patch.footer_linkedin = normalizeUrl(patch.footer_linkedin);
+      patch.footer_instagram = normalizeUrl(patch.footer_instagram);
+      patch.report_whatsapp_link = normalizeUrl(patch.report_whatsapp_link);
       await updateSingleton("site_settings", patch);
       setStatus({ type: "success", message: "Tersimpan." });
       refetch();

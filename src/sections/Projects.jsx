@@ -1,5 +1,6 @@
 import { createResource, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { normalizeUrl } from "../lib/url";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import "./Projects.css";
@@ -45,13 +46,13 @@ export default function Projects() {
                     <div class="project-links">
                       {/* Tampilkan tombol Live Demo hanya jika link diisi */}
                       <Show when={project.link && project.link !== "#" && project.link !== ""}>
-                        <a href={project.link} target="_blank" rel="noopener noreferrer">
+                        <a href={normalizeUrl(project.link)} target="_blank" rel="noopener noreferrer">
                           <Button variant="live">Live Demo</Button>
                         </a>
                       </Show>
                       {/* Tampilkan tombol GitHub hanya jika github diisi */}
                       <Show when={project.github && project.github !== "#" && project.github !== ""}>
-                        <a href={project.github} target="_blank" rel="noopener noreferrer">
+                        <a href={normalizeUrl(project.github)} target="_blank" rel="noopener noreferrer">
                           <Button variant="default">GitHub</Button>
                         </a>
                       </Show>

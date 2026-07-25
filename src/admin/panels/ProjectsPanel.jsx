@@ -1,5 +1,6 @@
 import { createResource, createSignal, For, Show } from "solid-js";
 import { fetchCollection, insertRow, updateRow, deleteRow, uploadProjectImage } from "../../lib/api";
+import { normalizeUrl } from "../../lib/url";
 
 const EMPTY = { title: "", description: "", image: "", link: "", github: "", tags: [] };
 
@@ -34,7 +35,12 @@ function ProjectForm(props) {
     setError("");
     try {
       const tags = tagsText().split(",").map((t) => t.trim()).filter(Boolean);
-      await props.onSubmit({ ...form(), tags });
+      await props.onSubmit({
+        ...form(),
+        link: normalizeUrl(form().link),
+        github: normalizeUrl(form().github),
+        tags,
+      });
       if (!props.initial) {
         setForm({ ...EMPTY });
         setTagsText("");

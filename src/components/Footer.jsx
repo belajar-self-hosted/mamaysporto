@@ -1,5 +1,6 @@
 import { createResource } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { normalizeUrl } from "../lib/url";
 import "./Footer.css";
 
 export default function Footer() {
@@ -14,7 +15,7 @@ export default function Footer() {
         </div>
         <div class="footer-social">
           <a
-            href={settings()?.footer_github || "#"}
+            href={normalizeUrl(settings()?.footer_github) || "#"}
             class="social-link neo-box"
             aria-label="GitHub"
           >
@@ -23,7 +24,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href={settings()?.footer_linkedin || "#"}
+            href={normalizeUrl(settings()?.footer_linkedin) || "#"}
             class="social-link neo-box"
             aria-label="LinkedIn"
           >
@@ -32,7 +33,7 @@ export default function Footer() {
             </svg>
           </a>
           <a
-            href={settings()?.footer_instagram || "#"}
+            href={normalizeUrl(settings()?.footer_instagram) || "#"}
             class="social-link neo-box"
             aria-label="Instagram"
           >

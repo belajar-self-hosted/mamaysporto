@@ -1,5 +1,6 @@
 import { createResource, createSignal, onCleanup, onMount } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { normalizeUrl } from "../lib/url";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -44,7 +45,7 @@ export default function Navbar() {
           <li><a href="#projects" onClick={closeMenu}>Projects</a></li>
           <li><a href="#experience" onClick={closeMenu}>Experience</a></li>
           <li><a href="#contact" onClick={closeMenu}>Contact</a></li>
-          <li><a href={settings()?.report_whatsapp_link || "#"} onClick={closeMenu} class="report-btn">Report</a></li>
+          <li><a href={normalizeUrl(settings()?.report_whatsapp_link) || "#"} onClick={closeMenu} class="report-btn">Report</a></li>
         </ul>
       </nav>
     </header>

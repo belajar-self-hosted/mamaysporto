@@ -1,5 +1,6 @@
 import { createResource, createSignal, createEffect, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
+import { normalizeUrl } from "../../lib/url";
 
 export default function HeroPanel() {
   const [hero, { refetch }] = createResource(() => fetchCollection("hero"));
@@ -36,6 +37,7 @@ export default function HeroPanel() {
     setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
+      patch.cta_yowman_link = normalizeUrl(patch.cta_yowman_link);
       await updateSingleton("hero", patch);
       setStatus({ type: "success", message: "Tersimpan." });
       refetch();

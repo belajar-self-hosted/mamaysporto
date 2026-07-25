@@ -1,5 +1,6 @@
 import { createResource, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { normalizeUrl } from "../lib/url";
 import Button from "../components/Button";
 import "./Hero.css";
 import ppTama from "../assets/ppTama.jpeg";
@@ -36,7 +37,7 @@ export default function Hero() {
               <Button
                 variant="default"
                 class="btn-ai"
-                onClick={() => window.open(heroData().cta_yowman_link, "_blank")}
+                onClick={() => window.open(normalizeUrl(heroData().cta_yowman_link), "_blank")}
               >
                 {heroData().cta_yowman_label}
               </Button>
