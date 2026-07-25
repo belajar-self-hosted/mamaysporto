@@ -41,13 +41,8 @@ function ProjectForm(props) {
         github: normalizeUrl(form().github),
         tags,
       });
-      if (!props.initial) {
-        setForm({ ...EMPTY });
-        setTagsText("");
-      }
     } catch (err) {
       setError(err.message);
-    } finally {
       setBusy(false);
     }
   };
@@ -102,6 +97,9 @@ function ProjectForm(props) {
         <button type="submit" class="neo-btn btn-primary" disabled={busy() || uploading()}>
           {props.submitLabel || "Simpan"}
         </button>
+        <button type="button" class="neo-btn btn-default" disabled={busy()} onClick={props.onCancel}>
+          Batal
+        </button>
         <Show when={props.onDelete}>
           <button type="button" class="neo-btn btn-accent" disabled={busy()} onClick={props.onDelete}>Hapus</button>
         </Show>
@@ -112,41 +110,78 @@ function ProjectForm(props) {
 
 export default function ProjectsPanel() {
   const [items, { refetch }] = createResource(() => fetchCollection("projects"));
+  const [openId, setOpenId] = createSignal(null); // null | "new" | item.id
+
+  const toggle = (id) => setOpenId(openId() === id ? null : id);
+
+  const handleDelete = async (item) => {
+    if (!confirm(`Hapus project "${item.title}"? Tindakan ini tidak bisa dibatalkan.`)) return;
+    await deleteRow("projects", item.id);
+    refetch();
+  };
 
   return (
     <div class="admin-panel">
       <h2>Projects</h2>
 
-      <div class="admin-card neo-box">
-        <h3>Tambah Project</h3>
-        <ProjectForm
-          submitLabel="Tambah"
-          onSubmit={async (data) => {
-            await insertRow("projects", data);
-            refetch();
-          }}
-        />
-      </div>
+      <button type="button" class="neo-btn btn-primary admin-add-toggle" onClick={() => toggle("new")}>
+        {openId() === "new" ? "Batal Tambah" : "+ Tambah Project Baru"}
+      </button>
+
+      <Show when={openId() === "new"}>
+        <div class="admin-card neo-box">
+          <h3>Tambah Project</h3>
+          <ProjectForm
+            submitLabel="Tambah"
+            onCancel={() => setOpenId(null)}
+            onSubmit={async (data) => {
+              await insertRow("projects", data);
+              setOpenId(null);
+              refetch();
+            }}
+          />
+        </div>
+      </Show>
 
       <Show when={!items.loading} fallback={<p>Memuat...</p>}>
-        <For each={items()}>
-          {(item) => (
-            <div class="admin-card neo-box">
-              <ProjectForm
-                initial={item}
-                submitLabel="Simpan"
-                onSubmit={async (data) => {
-                  await updateRow("projects", item.id, data);
-                  refetch();
-                }}
-                onDelete={async () => {
-                  await deleteRow("projects", item.id);
-                  refetch();
-                }}
-              />
-            </div>
-          )}
-        </For>
+        <div class="admin-list">
+          <For each={items()}>
+            {(item) => (
+              <div class="admin-card neo-box">
+                <Show
+                  when={openId() === item.id}
+                  fallback={
+                    <div class="admin-item-row">
+                      <Show when={item.image}>
+                        <img src={item.image} alt="" class="admin-row-thumb" />
+                      </Show>
+                      <div class="admin-row-info">
+                        <strong>{item.title}</strong>
+                        <span class="admin-row-sub">{(item.tags || []).join(", ")}</span>
+                      </div>
+                      <div class="admin-row-actions">
+                        <button class="neo-btn btn-default" onClick={() => toggle(item.id)}>Edit</button>
+                        <button class="neo-btn btn-accent" onClick={() => handleDelete(item)}>Hapus</button>
+                      </div>
+                    </div>
+                  }
+                >
+                  <ProjectForm
+                    initial={item}
+                    submitLabel="Simpan"
+                    onCancel={() => setOpenId(null)}
+                    onSubmit={async (data) => {
+                      await updateRow("projects", item.id, data);
+                      setOpenId(null);
+                      refetch();
+                    }}
+                    onDelete={() => handleDelete(item)}
+                  />
+                </Show>
+              </div>
+            )}
+          </For>
+        </div>
       </Show>
     </div>
   );

@@ -193,6 +193,63 @@
   align-items: center;
 }
 
+.admin-add-toggle {
+  margin-bottom: 1.25rem;
+}
+
+.admin-item-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-row-thumb {
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  flex-shrink: 0;
+}
+
+.admin-row-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.admin-row-info strong {
+  font-family: var(--font-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-row-sub {
+  font-size: 0.85rem;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-item-row {
+    flex-wrap: wrap;
+  }
+  .admin-row-info {
+    min-width: 140px;
+  }
+}
+
 .admin-card {
   padding: 1.25rem;
   background-color: var(--white);
