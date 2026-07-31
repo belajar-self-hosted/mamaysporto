@@ -9,7 +9,7 @@
   border: var(--border-main);
   border-radius: var(--radius-main);
   box-shadow: var(--shadow-main);
-  transition: all 0.2s ease-in-out;
+  transition: transform var(--duration-fast) var(--ease-snap), box-shadow var(--duration-fast) var(--ease-snap);
   color: var(--text-main);
 }
 
@@ -19,8 +19,9 @@
 }
 
 .neo-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: none;
+  transform: translate(2px, 2px) !important;
+  box-shadow: none !important;
+  transition-duration: 60ms;
 }
 
 .btn-primary { background-color: var(--accent-1); }

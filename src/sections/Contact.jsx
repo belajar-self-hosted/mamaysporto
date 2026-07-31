@@ -2,6 +2,7 @@ import { createResource, createSignal, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import Button from "../components/Button";
 import { reveal } from "../lib/scrollReveal";
+import { burst } from "../lib/clickBurst";
 import "./Contact.css";
 
 export default function Contact() {
@@ -12,6 +13,7 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    burst(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
     // TODO: Replace with Formspree or EmailJS endpoint
     console.log("Form submitted:", formData());
     setAlertMessage("Terima kasih sudah menghubungi saya! Fitur ini masih berupa demo karena website ini masih dalam tahap pengembangan. Jika kamu memiliki saran atau menemukan bug, silakan gunakan tombol \"Report\".");

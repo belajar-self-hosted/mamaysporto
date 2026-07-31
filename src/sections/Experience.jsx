@@ -1,6 +1,7 @@
 import { createResource, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import { reveal } from "../lib/scrollReveal";
+import { revealText } from "../lib/textReveal";
 import "./Experience.css";
 
 export default function Experience() {
@@ -9,7 +10,7 @@ export default function Experience() {
 
   return (
     <section id="experience" class="section experience-section" use:reveal>
-      <h2 class="section-title">EXPERIENCE</h2>
+      <h2 class="section-title" use:revealText>EXPERIENCE</h2>
       
       <Show when={!experienceData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat pengalaman dari server...</p>}>
         <Show when={!experienceData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Gagal memuat pengalaman: Pastikan izin Public 'Read' aktif.</p>}>

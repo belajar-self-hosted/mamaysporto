@@ -4,6 +4,7 @@ import { normalizeUrl } from "../lib/url";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { reveal } from "../lib/scrollReveal";
+import { revealText } from "../lib/textReveal";
 import "./Projects.css";
 
 export default function Projects() {
@@ -18,7 +19,7 @@ export default function Projects() {
 
   return (
     <section id="projects" class="section projects-section" use:reveal>
-      <h2 class="section-title">PROJECTS</h2>
+      <h2 class="section-title" use:revealText>PROJECTS</h2>
       
       {/* Menampilkan teks loading jika data sedang diambil */}
       <Show when={!projectsData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat projek dari server...</p>}>

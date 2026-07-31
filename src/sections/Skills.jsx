@@ -1,6 +1,7 @@
 import { createResource, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import { reveal } from "../lib/scrollReveal";
+import { revealText } from "../lib/textReveal";
 import "./Skills.css";
 
 export default function Skills() {
@@ -13,7 +14,7 @@ export default function Skills() {
 
   return (
     <section id="skills" class="section skills-section" use:reveal>
-      <h2 class="section-title">SKILLS</h2>
+      <h2 class="section-title" use:revealText>SKILLS</h2>
       
       <Show when={!skillsData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat skill dari server...</p>}>
         <Show when={!skillsData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Gagal memuat skill: Pastikan izin Public 'Read' aktif.</p>}>

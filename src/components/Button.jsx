@@ -1,9 +1,10 @@
 import { splitProps } from "solid-js";
+import { magnetic } from "../lib/magnetic";
 import "./Button.css";
 
 export default function Button(props) {
   const [local, others] = splitProps(props, ["children", "variant", "class"]);
-  
+
   const variantClass = () => {
     switch (local.variant) {
       case "primary": return "btn-primary";
@@ -15,7 +16,12 @@ export default function Button(props) {
   };
 
   return (
-    <button class={`neo-btn ${variantClass()} ${local.class || ""}`} {...others}>
+    <button
+      class={`neo-btn ${variantClass()} ${local.class || ""}`}
+      data-cursor="hover"
+      use:magnetic
+      {...others}
+    >
       {local.children}
     </button>
   );

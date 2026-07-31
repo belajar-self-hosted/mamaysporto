@@ -1,0 +1,15 @@
+.hero-scene-canvas {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  left: 42%;
+  top: -40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .hero-scene-canvas {
+    display: none;
+  }
+}

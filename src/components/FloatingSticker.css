@@ -1,0 +1,22 @@
+.floating-sticker {
+  position: absolute;
+  z-index: 5;
+  padding: 0.5rem 1rem;
+  background-color: var(--white);
+  border: var(--border-main);
+  box-shadow: var(--shadow-main);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .floating-sticker {
+    display: none;
+  }
+}

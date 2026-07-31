@@ -14,7 +14,9 @@
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@supabase/supabase-js": "^2.50.0",
     "ai": "^7.0.0",
-    "solid-js": "^1.9.13"
+    "animejs": "^4.5.0",
+    "solid-js": "^1.9.13",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "concurrently": "^10.0.4",

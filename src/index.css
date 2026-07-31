@@ -17,6 +17,11 @@
   /* Typography */
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+
+  /* Motion (dipakai bareng oleh CSS transition & preset animejs di src/lib/motion.js) */
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 180ms;
+  --duration-base: 320ms;
 }
 
 * {
@@ -97,6 +102,21 @@ button {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+/* Stagger-per-kata (see src/lib/textReveal.js) */
+.reveal-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(16px);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-word {
+    opacity: 1;
+    transform: none;
   }
 }
 

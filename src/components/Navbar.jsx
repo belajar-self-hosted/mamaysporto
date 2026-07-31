@@ -25,7 +25,7 @@ export default function Navbar() {
     <header class="navbar-header">
       <nav class="navbar neo-box">
         <div class="navbar-brand">
-          <a href="#hero" onClick={closeMenu}><strong>{settings()?.navbar_brand || "WEBLOG"}</strong></a>
+          <a href="#hero" data-cursor="hover" onClick={closeMenu}><strong>{settings()?.navbar_brand || "WEBLOG"}</strong></a>
         </div>
         
         <button 
@@ -40,12 +40,12 @@ export default function Navbar() {
         </button>
 
         <ul class={`nav-links ${isOpen() ? "open" : ""}`}>
-          <li><a href="#about" onClick={closeMenu}>About</a></li>
-          <li><a href="#skills" onClick={closeMenu}>Skills</a></li>
-          <li><a href="#projects" onClick={closeMenu}>Projects</a></li>
-          <li><a href="#experience" onClick={closeMenu}>Experience</a></li>
-          <li><a href="#contact" onClick={closeMenu}>Contact</a></li>
-          <li><a href={buildWhatsAppLink(settings()?.report_whatsapp_number, settings()?.report_whatsapp_message) || "#"} onClick={closeMenu} class="report-btn">Report</a></li>
+          <li><a href="#about" data-cursor="hover" onClick={closeMenu}>About</a></li>
+          <li><a href="#skills" data-cursor="hover" onClick={closeMenu}>Skills</a></li>
+          <li><a href="#projects" data-cursor="hover" onClick={closeMenu}>Projects</a></li>
+          <li><a href="#experience" data-cursor="hover" onClick={closeMenu}>Experience</a></li>
+          <li><a href="#contact" data-cursor="hover" onClick={closeMenu}>Contact</a></li>
+          <li><a href={buildWhatsAppLink(settings()?.report_whatsapp_number, settings()?.report_whatsapp_message) || "#"} data-cursor="hover" onClick={closeMenu} class="report-btn">Report</a></li>
         </ul>
       </nav>
     </header>

@@ -1,6 +1,7 @@
 import { createResource, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import { reveal } from "../lib/scrollReveal";
+import { revealText } from "../lib/textReveal";
 import "./About.css";
 
 export default function About() {
@@ -12,7 +13,7 @@ export default function About() {
   return (
     <section id="about" class="section about-section" use:reveal>
       <div class="about-container neo-box">
-        <h2 class="section-title">ABOUT ME</h2>
+        <h2 class="section-title" use:revealText>ABOUT ME</h2>
         
         <Show when={!aboutData.loading} fallback={<p style={{ "text-align": "center" }}>Memuat profil...</p>}>
           <Show when={!aboutData.error} fallback={<p style={{ color: "red", "text-align": "center" }}>Gagal memuat profil: Pastikan izin Public 'Read' aktif.</p>}>

@@ -177,6 +177,18 @@ export default function SiteSettingsPanel() {
 
           <h3>AI Chat (Yowman) System Prompt</h3>
           <div class="admin-form-group">
+            <label>Teks Berjalan (di bawah chat container)</label>
+            <input
+              class="neo-input"
+              placeholder="Ada pertanyaan tentang aku? Tanya langsung ke YOWMAN..."
+              value={form().chat_ticker_text}
+              onInput={update("chat_ticker_text")}
+            />
+            <p class="admin-hint">
+              Teks ini tampil berjalan dari kiri ke kanan tepat di bawah kotak chat Yowman di homepage.
+            </p>
+          </div>
+          <div class="admin-form-group">
             <label>System Prompt</label>
             <textarea
               class="neo-input admin-textarea-large"
