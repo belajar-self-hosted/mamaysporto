@@ -1,5 +1,6 @@
 import { createEffect, createSignal, onMount, For } from "solid-js";
 import { useChat } from "@ai-sdk/solid";
+import { reveal } from "../lib/scrollReveal";
 import "./ChatAI.css";
 
 export default function ChatAI() {
@@ -54,7 +55,7 @@ export default function ChatAI() {
   };
 
   return (
-    <section id="chatai" class="section chat-section">
+    <section id="chatai" class="section chat-section" use:reveal>
       <div class="chat-container neo-box">
         <header class="chat-header">
           <h2>YOWMAN</h2>

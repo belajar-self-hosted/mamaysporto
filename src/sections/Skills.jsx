@@ -1,5 +1,6 @@
 import { createResource, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { reveal } from "../lib/scrollReveal";
 import "./Skills.css";
 
 export default function Skills() {
@@ -11,7 +12,7 @@ export default function Skills() {
   const getRandomColor = () => accentColors[Math.floor(Math.random() * accentColors.length)];
 
   return (
-    <section id="skills" class="section skills-section">
+    <section id="skills" class="section skills-section" use:reveal>
       <h2 class="section-title">SKILLS</h2>
       
       <Show when={!skillsData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat skill dari server...</p>}>

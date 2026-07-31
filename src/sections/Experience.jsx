@@ -1,5 +1,6 @@
 import { createResource, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { reveal } from "../lib/scrollReveal";
 import "./Experience.css";
 
 export default function Experience() {
@@ -7,7 +8,7 @@ export default function Experience() {
   const [experienceData] = createResource(() => fetchCollection("experience"));
 
   return (
-    <section id="experience" class="section experience-section">
+    <section id="experience" class="section experience-section" use:reveal>
       <h2 class="section-title">EXPERIENCE</h2>
       
       <Show when={!experienceData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat pengalaman dari server...</p>}>

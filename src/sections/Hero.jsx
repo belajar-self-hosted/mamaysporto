@@ -2,6 +2,7 @@ import { createResource, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import { normalizeUrl } from "../lib/url";
 import Button from "../components/Button";
+import { reveal } from "../lib/scrollReveal";
 import "./Hero.css";
 import ppTama from "../assets/ppTama.jpeg";
 
@@ -10,7 +11,7 @@ export default function Hero() {
   const [heroData] = createResource(() => fetchCollection("hero"));
 
   return (
-    <section id="hero" class="section hero-section">
+    <section id="hero" class="section hero-section" use:reveal>
       <div class="hero-content">
         <Show when={!heroData.loading} fallback={<h1 class="hero-title">Memuat...</h1>}>
           <Show when={!heroData.error} fallback={<h1 class="hero-title">Gagal memuat data.</h1>}>

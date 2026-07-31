@@ -1,6 +1,7 @@
 import { createResource, createSignal, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import Button from "../components/Button";
+import { reveal } from "../lib/scrollReveal";
 import "./Contact.css";
 
 export default function Contact() {
@@ -19,7 +20,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" class="section contact-section">
+    <section id="contact" class="section contact-section" use:reveal>
       <div class="contact-container neo-box">
         <h2 class="section-title">{settings()?.contact_title || "GET IN TOUCH"}</h2>
         <p class="contact-desc">

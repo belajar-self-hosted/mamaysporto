@@ -3,6 +3,7 @@ import { fetchCollection } from "../lib/api";
 import { normalizeUrl } from "../lib/url";
 import Card from "../components/Card";
 import Button from "../components/Button";
+import { reveal } from "../lib/scrollReveal";
 import "./Projects.css";
 
 export default function Projects() {
@@ -16,7 +17,7 @@ export default function Projects() {
   const getRandomColor = () => accentColors[Math.floor(Math.random() * accentColors.length)];
 
   return (
-    <section id="projects" class="section projects-section">
+    <section id="projects" class="section projects-section" use:reveal>
       <h2 class="section-title">PROJECTS</h2>
       
       {/* Menampilkan teks loading jika data sedang diambil */}

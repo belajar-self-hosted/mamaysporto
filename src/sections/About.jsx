@@ -1,5 +1,6 @@
 import { createResource, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { reveal } from "../lib/scrollReveal";
 import "./About.css";
 
 export default function About() {
@@ -9,7 +10,7 @@ export default function About() {
   const [aboutData] = createResource(() => fetchCollection("about"));
 
   return (
-    <section id="about" class="section about-section">
+    <section id="about" class="section about-section" use:reveal>
       <div class="about-container neo-box">
         <h2 class="section-title">ABOUT ME</h2>
         
