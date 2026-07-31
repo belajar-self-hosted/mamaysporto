@@ -1,23 +1,39 @@
-import { createResource, createSignal, For, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, For, Show } from "solid-js";
 import { fetchCollection, insertRow, updateRow, deleteRow } from "../../lib/api";
+import { notifySuccess, notifyError, setDirty, confirmAction, confirmDiscardIfDirty } from "../adminStore";
 
 const EMPTY = { role: "", company: "", period: "", description: "" };
+
+function snapshotExperience(form) {
+  return JSON.stringify({
+    role: form.role,
+    company: form.company,
+    period: form.period,
+    description: form.description,
+  });
+}
 
 function ExperienceForm(props) {
   const [form, setForm] = createSignal({ ...EMPTY, ...props.initial });
   const [busy, setBusy] = createSignal(false);
-  const [error, setError] = createSignal("");
+
+  const initialSnapshot = snapshotExperience({ ...EMPTY, ...props.initial });
+
+  createEffect(() => {
+    setDirty(snapshotExperience(form()) !== initialSnapshot);
+  });
+
+  onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setBusy(true);
-    setError("");
     try {
       await props.onSubmit(form());
     } catch (err) {
-      setError(err.message);
+      notifyError(err.message);
       setBusy(false);
     }
   };
@@ -42,9 +58,6 @@ function ExperienceForm(props) {
         <label>Deskripsi</label>
         <textarea class="neo-input" rows="2" value={form().description} onInput={update("description")} />
       </div>
-      <Show when={error()}>
-        <p class="admin-error">{error()}</p>
-      </Show>
       <div class="admin-form-actions">
         <button type="submit" class="neo-btn btn-primary" disabled={busy()}>
           {props.submitLabel || "Simpan"}
@@ -64,12 +77,37 @@ export default function ExperiencePanel() {
   const [items, { refetch }] = createResource(() => fetchCollection("experience"));
   const [openId, setOpenId] = createSignal(null); // null | "new" | item.id
 
-  const toggle = (id) => setOpenId(openId() === id ? null : id);
+  const toggle = async (id) => {
+    if (openId() === id) {
+      setOpenId(null);
+      return;
+    }
+    const ok = await confirmDiscardIfDirty(
+      "Form ini punya perubahan yang belum disimpan. Pindah akan membuang perubahan tersebut. Lanjutkan?"
+    );
+    if (!ok) return;
+    setDirty(false);
+    setOpenId(id);
+  };
 
   const handleDelete = async (item) => {
-    if (!confirm(`Hapus experience "${item.role}"? Tindakan ini tidak bisa dibatalkan.`)) return;
-    await deleteRow("experience", item.id);
-    refetch();
+    const ok = await confirmAction(`Hapus experience "${item.role}"? Tindakan ini tidak bisa dibatalkan.`, {
+      title: "Hapus Experience",
+      confirmLabel: "Hapus",
+      danger: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteRow("experience", item.id);
+      if (openId() === item.id) {
+        setDirty(false);
+        setOpenId(null);
+      }
+      notifySuccess("Experience berhasil dihapus.");
+      refetch();
+    } catch (err) {
+      notifyError(err.message);
+    }
   };
 
   return (
@@ -89,6 +127,7 @@ export default function ExperiencePanel() {
             onSubmit={async (data) => {
               await insertRow("experience", data);
               setOpenId(null);
+              notifySuccess("Experience berhasil ditambahkan.");
               refetch();
             }}
           />
@@ -122,6 +161,7 @@ export default function ExperiencePanel() {
                     onSubmit={async (data) => {
                       await updateRow("experience", item.id, data);
                       setOpenId(null);
+                      notifySuccess("Experience berhasil disimpan.");
                       refetch();
                     }}
                     onDelete={() => handleDelete(item)}

@@ -1,6 +1,8 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount, onCleanup } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { signOut } from "../lib/auth";
+import { isDirty, setDirty, confirmDiscardIfDirty } from "./adminStore";
+import AdminOverlays from "./AdminOverlays";
 import HeroPanel from "./panels/HeroPanel";
 import AboutPanel from "./panels/AboutPanel";
 import SkillsPanel from "./panels/SkillsPanel";
@@ -22,6 +24,40 @@ export default function AdminLayout() {
 
   const activeComponent = () => TABS.find((t) => t.key === active())?.Component;
 
+  onMount(() => {
+    const handleBeforeUnload = (e) => {
+      if (isDirty()) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    onCleanup(() => window.removeEventListener("beforeunload", handleBeforeUnload));
+  });
+
+  const goTo = async (key) => {
+    if (key === active()) return;
+    const ok = await confirmDiscardIfDirty();
+    if (!ok) return;
+    setDirty(false);
+    setActive(key);
+  };
+
+  const handleViewSite = async (e) => {
+    e.preventDefault();
+    const ok = await confirmDiscardIfDirty();
+    if (!ok) return;
+    setDirty(false);
+    window.location.hash = "#/";
+  };
+
+  const handleLogout = async () => {
+    const ok = await confirmDiscardIfDirty();
+    if (!ok) return;
+    setDirty(false);
+    signOut();
+  };
+
   return (
     <div class="admin-layout">
       <aside class="admin-sidebar">
@@ -30,18 +66,19 @@ export default function AdminLayout() {
           {TABS.map((tab) => (
             <button
               class={`admin-nav-item ${active() === tab.key ? "active" : ""}`}
-              onClick={() => setActive(tab.key)}
+              onClick={() => goTo(tab.key)}
             >
               {tab.label}
             </button>
           ))}
         </nav>
-        <a href="#/" class="admin-nav-item admin-view-site">Lihat Website ↗</a>
-        <button class="neo-btn btn-default admin-logout" onClick={() => signOut()}>Logout</button>
+        <a href="#/" class="admin-nav-item admin-view-site" onClick={handleViewSite}>Lihat Website ↗</a>
+        <button class="neo-btn btn-default admin-logout" onClick={handleLogout}>Logout</button>
       </aside>
       <main class="admin-content">
         <Dynamic component={activeComponent()} />
       </main>
+      <AdminOverlays />
     </div>
   );
 }

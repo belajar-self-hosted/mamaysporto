@@ -1,24 +1,35 @@
-import { createResource, createSignal, For, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, For, Show } from "solid-js";
 import { fetchCollection, insertRow, updateRow, deleteRow } from "../../lib/api";
+import { notifySuccess, notifyError, setDirty, confirmAction } from "../adminStore";
 
 export default function SkillsPanel() {
   const [skills, { refetch }] = createResource(() => fetchCollection("skills"));
   const [newSkill, setNewSkill] = createSignal("");
   const [edits, setEdits] = createSignal({});
-  const [status, setStatus] = createSignal({ type: "", message: "" });
   const [busy, setBusy] = createSignal(false);
+
+  createEffect(() => {
+    const list = skills() || [];
+    const hasEdit = Object.entries(edits()).some(([id, value]) => {
+      const orig = list.find((s) => String(s.id) === String(id))?.name;
+      return value !== undefined && value !== orig;
+    });
+    setDirty(hasEdit || newSkill().trim() !== "");
+  });
+
+  onCleanup(() => setDirty(false));
 
   const handleAdd = async (e) => {
     e.preventDefault();
     if (!newSkill().trim()) return;
     setBusy(true);
-    setStatus({ type: "", message: "" });
     try {
       await insertRow("skills", { name: newSkill().trim() });
       setNewSkill("");
+      notifySuccess("Skill berhasil ditambahkan.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setBusy(false);
     }
@@ -28,25 +39,31 @@ export default function SkillsPanel() {
     const value = edits()[id];
     if (value === undefined) return;
     setBusy(true);
-    setStatus({ type: "", message: "" });
     try {
       await updateRow("skills", id, { name: value });
+      notifySuccess("Skill berhasil disimpan.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setBusy(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (skill) => {
+    const ok = await confirmAction(`Hapus skill "${skill.name}"? Tindakan ini tidak bisa dibatalkan.`, {
+      title: "Hapus Skill",
+      confirmLabel: "Hapus",
+      danger: true,
+    });
+    if (!ok) return;
     setBusy(true);
-    setStatus({ type: "", message: "" });
     try {
-      await deleteRow("skills", id);
+      await deleteRow("skills", skill.id);
+      notifySuccess("Skill berhasil dihapus.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setBusy(false);
     }
@@ -66,10 +83,6 @@ export default function SkillsPanel() {
         <button type="submit" class="neo-btn btn-primary" disabled={busy()}>Tambah</button>
       </form>
 
-      <Show when={status().message}>
-        <p class="admin-error">{status().message}</p>
-      </Show>
-
       <Show when={!skills.loading} fallback={<p>Memuat...</p>}>
         <div class="admin-list">
           <For each={skills()}>
@@ -81,7 +94,7 @@ export default function SkillsPanel() {
                   onInput={(e) => setEdits({ ...edits(), [skill.id]: e.target.value })}
                 />
                 <button class="neo-btn btn-default" disabled={busy()} onClick={() => handleSave(skill.id)}>Simpan</button>
-                <button class="neo-btn btn-accent" disabled={busy()} onClick={() => handleDelete(skill.id)}>Hapus</button>
+                <button class="neo-btn btn-accent" disabled={busy()} onClick={() => handleDelete(skill)}>Hapus</button>
               </div>
             )}
           </For>

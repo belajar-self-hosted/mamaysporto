@@ -1,18 +1,30 @@
-import { createResource, createSignal, createEffect, For, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, For, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 import { normalizeUrl } from "../../lib/url";
 import SocialIcon, { platformLabel } from "../../lib/socialIcons.jsx";
+import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function SiteSettingsPanel() {
   const [settings, { refetch }] = createResource(() => fetchCollection("site_settings"));
   const [form, setForm] = createSignal(null);
-  const [status, setStatus] = createSignal({ type: "", message: "" });
+  const [original, setOriginal] = createSignal(null);
   const [saving, setSaving] = createSignal(false);
   const [uploading, setUploading] = createSignal(false);
 
   createEffect(() => {
-    if (settings() && !form()) setForm({ ...settings() });
+    if (settings() && !form()) {
+      setForm({ ...settings() });
+      setOriginal({ ...settings() });
+    }
   });
+
+  createEffect(() => {
+    if (form() && original()) {
+      setDirty(JSON.stringify(form()) !== JSON.stringify(original()));
+    }
+  });
+
+  onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
 
@@ -35,12 +47,11 @@ export default function SiteSettingsPanel() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setStatus({ type: "", message: "" });
     try {
       const url = await uploadSiteImage(file);
       setForm({ ...form(), favicon_url: url });
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -50,17 +61,19 @@ export default function SiteSettingsPanel() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
       patch.social_links = (patch.social_links || [])
         .map((link) => ({ url: normalizeUrl(link.url) }))
         .filter((link) => link.url && link.url !== "#");
-      await updateSingleton("site_settings", patch);
-      setStatus({ type: "success", message: "Tersimpan." });
+      const updated = await updateSingleton("site_settings", patch);
+      setForm({ ...updated });
+      setOriginal({ ...updated });
+      setDirty(false);
+      notifySuccess("Site settings berhasil disimpan.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setSaving(false);
     }
@@ -175,10 +188,6 @@ export default function SiteSettingsPanel() {
               Prompt ini menentukan bagaimana asisten AI Yowman menjawab pertanyaan pengunjung.
             </p>
           </div>
-
-          <Show when={status().message}>
-            <p class={status().type === "error" ? "admin-error" : "admin-success"}>{status().message}</p>
-          </Show>
 
           <button type="submit" class="neo-btn btn-primary" disabled={saving() || uploading()}>
             {saving() ? "Menyimpan..." : "Simpan"}

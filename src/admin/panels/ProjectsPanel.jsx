@@ -1,15 +1,34 @@
-import { createResource, createSignal, For, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, For, Show } from "solid-js";
 import { fetchCollection, insertRow, updateRow, deleteRow, uploadProjectImage } from "../../lib/api";
 import { normalizeUrl } from "../../lib/url";
+import { notifySuccess, notifyError, setDirty, confirmAction, confirmDiscardIfDirty } from "../adminStore";
 
 const EMPTY = { title: "", description: "", image: "", link: "", github: "", tags: [] };
+
+function snapshotProject(form, tagsText) {
+  return JSON.stringify({
+    title: form.title,
+    description: form.description,
+    image: form.image,
+    link: form.link,
+    github: form.github,
+    tags: tagsText,
+  });
+}
 
 function ProjectForm(props) {
   const [form, setForm] = createSignal({ ...EMPTY, ...props.initial });
   const [tagsText, setTagsText] = createSignal((props.initial?.tags || []).join(", "));
   const [busy, setBusy] = createSignal(false);
   const [uploading, setUploading] = createSignal(false);
-  const [error, setError] = createSignal("");
+
+  const initialSnapshot = snapshotProject({ ...EMPTY, ...props.initial }, (props.initial?.tags || []).join(", "));
+
+  createEffect(() => {
+    setDirty(snapshotProject(form(), tagsText()) !== initialSnapshot);
+  });
+
+  onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
 
@@ -17,12 +36,11 @@ function ProjectForm(props) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setError("");
     try {
       const url = await uploadProjectImage(file);
       setForm({ ...form(), image: url });
     } catch (err) {
-      setError(err.message);
+      notifyError(err.message);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -32,7 +50,6 @@ function ProjectForm(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setBusy(true);
-    setError("");
     try {
       const tags = tagsText().split(",").map((t) => t.trim()).filter(Boolean);
       await props.onSubmit({
@@ -42,7 +59,7 @@ function ProjectForm(props) {
         tags,
       });
     } catch (err) {
-      setError(err.message);
+      notifyError(err.message);
       setBusy(false);
     }
   };
@@ -89,10 +106,6 @@ function ProjectForm(props) {
         <input class="neo-input" value={tagsText()} onInput={(e) => setTagsText(e.target.value)} />
       </div>
 
-      <Show when={error()}>
-        <p class="admin-error">{error()}</p>
-      </Show>
-
       <div class="admin-form-actions">
         <button type="submit" class="neo-btn btn-primary" disabled={busy() || uploading()}>
           {props.submitLabel || "Simpan"}
@@ -112,12 +125,37 @@ export default function ProjectsPanel() {
   const [items, { refetch }] = createResource(() => fetchCollection("projects"));
   const [openId, setOpenId] = createSignal(null); // null | "new" | item.id
 
-  const toggle = (id) => setOpenId(openId() === id ? null : id);
+  const toggle = async (id) => {
+    if (openId() === id) {
+      setOpenId(null);
+      return;
+    }
+    const ok = await confirmDiscardIfDirty(
+      "Form ini punya perubahan yang belum disimpan. Pindah akan membuang perubahan tersebut. Lanjutkan?"
+    );
+    if (!ok) return;
+    setDirty(false);
+    setOpenId(id);
+  };
 
   const handleDelete = async (item) => {
-    if (!confirm(`Hapus project "${item.title}"? Tindakan ini tidak bisa dibatalkan.`)) return;
-    await deleteRow("projects", item.id);
-    refetch();
+    const ok = await confirmAction(`Hapus project "${item.title}"? Tindakan ini tidak bisa dibatalkan.`, {
+      title: "Hapus Project",
+      confirmLabel: "Hapus",
+      danger: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteRow("projects", item.id);
+      if (openId() === item.id) {
+        setDirty(false);
+        setOpenId(null);
+      }
+      notifySuccess("Project berhasil dihapus.");
+      refetch();
+    } catch (err) {
+      notifyError(err.message);
+    }
   };
 
   return (
@@ -137,6 +175,7 @@ export default function ProjectsPanel() {
             onSubmit={async (data) => {
               await insertRow("projects", data);
               setOpenId(null);
+              notifySuccess("Project berhasil ditambahkan.");
               refetch();
             }}
           />
@@ -173,6 +212,7 @@ export default function ProjectsPanel() {
                     onSubmit={async (data) => {
                       await updateRow("projects", item.id, data);
                       setOpenId(null);
+                      notifySuccess("Project berhasil disimpan.");
                       refetch();
                     }}
                     onDelete={() => handleDelete(item)}

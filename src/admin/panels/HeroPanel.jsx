@@ -1,17 +1,29 @@
-import { createResource, createSignal, createEffect, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 import { normalizeUrl } from "../../lib/url";
+import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function HeroPanel() {
   const [hero, { refetch }] = createResource(() => fetchCollection("hero"));
   const [form, setForm] = createSignal(null);
-  const [status, setStatus] = createSignal({ type: "", message: "" });
+  const [original, setOriginal] = createSignal(null);
   const [saving, setSaving] = createSignal(false);
   const [uploading, setUploading] = createSignal(false);
 
   createEffect(() => {
-    if (hero() && !form()) setForm({ ...hero() });
+    if (hero() && !form()) {
+      setForm({ ...hero() });
+      setOriginal({ ...hero() });
+    }
   });
+
+  createEffect(() => {
+    if (form() && original()) {
+      setDirty(JSON.stringify(form()) !== JSON.stringify(original()));
+    }
+  });
+
+  onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
 
@@ -19,12 +31,11 @@ export default function HeroPanel() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setStatus({ type: "", message: "" });
     try {
       const url = await uploadSiteImage(file);
       setForm({ ...form(), image: url });
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -34,15 +45,17 @@ export default function HeroPanel() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
       patch.cta_yowman_link = normalizeUrl(patch.cta_yowman_link);
-      await updateSingleton("hero", patch);
-      setStatus({ type: "success", message: "Tersimpan." });
+      const updated = await updateSingleton("hero", patch);
+      setForm({ ...updated });
+      setOriginal({ ...updated });
+      setDirty(false);
+      notifySuccess("Hero section berhasil disimpan.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setSaving(false);
     }
@@ -106,10 +119,6 @@ export default function HeroPanel() {
               <input class="neo-input" value={form().cta_yowman_link} onInput={update("cta_yowman_link")} />
             </div>
           </div>
-
-          <Show when={status().message}>
-            <p class={status().type === "error" ? "admin-error" : "admin-success"}>{status().message}</p>
-          </Show>
 
           <button type="submit" class="neo-btn btn-primary" disabled={saving() || uploading()}>
             {saving() ? "Menyimpan..." : "Simpan"}

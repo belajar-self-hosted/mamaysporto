@@ -1,29 +1,43 @@
-import { createResource, createSignal, createEffect, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, Show } from "solid-js";
 import { fetchCollection, updateSingleton } from "../../lib/api";
+import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function AboutPanel() {
   const [about, { refetch }] = createResource(() => fetchCollection("about"));
   const [form, setForm] = createSignal(null);
-  const [status, setStatus] = createSignal({ type: "", message: "" });
+  const [original, setOriginal] = createSignal(null);
   const [saving, setSaving] = createSignal(false);
 
   createEffect(() => {
-    if (about() && !form()) setForm({ ...about() });
+    if (about() && !form()) {
+      setForm({ ...about() });
+      setOriginal({ ...about() });
+    }
   });
+
+  createEffect(() => {
+    if (form() && original()) {
+      setDirty(JSON.stringify(form()) !== JSON.stringify(original()));
+    }
+  });
+
+  onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setStatus({ type: "", message: "" });
     try {
       const { id, ...patch } = form();
-      await updateSingleton("about", patch);
-      setStatus({ type: "success", message: "Tersimpan." });
+      const updated = await updateSingleton("about", patch);
+      setForm({ ...updated });
+      setOriginal({ ...updated });
+      setDirty(false);
+      notifySuccess("About section berhasil disimpan.");
       refetch();
     } catch (err) {
-      setStatus({ type: "error", message: err.message });
+      notifyError(err.message);
     } finally {
       setSaving(false);
     }
@@ -69,10 +83,6 @@ export default function AboutPanel() {
               <input class="neo-input" value={form().stat_3_label} onInput={update("stat_3_label")} />
             </div>
           </div>
-
-          <Show when={status().message}>
-            <p class={status().type === "error" ? "admin-error" : "admin-success"}>{status().message}</p>
-          </Show>
 
           <button type="submit" class="neo-btn btn-primary" disabled={saving()}>
             {saving() ? "Menyimpan..." : "Simpan"}
