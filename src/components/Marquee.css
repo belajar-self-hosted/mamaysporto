@@ -15,7 +15,7 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 26s linear infinite;
+  animation: marquee-scroll 46s linear infinite;
 }
 
 /* Varian: teks berjalan kiri ke kanan (arah kebalikan dari marquee biasa) */
