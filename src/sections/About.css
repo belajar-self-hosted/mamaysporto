@@ -1,5 +1,8 @@
 .about-section {
   /* Inherits .section padding */
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-primary);
 }
 
 .about-container {
@@ -8,6 +11,7 @@
 }
 
 .section-title {
+  font-family: var(--font-display);
   font-size: 3rem;
   text-transform: uppercase;
   margin-bottom: 2rem;
@@ -20,6 +24,16 @@
   display: flex;
   gap: 3rem;
   align-items: flex-start;
+}
+
+.about-figure {
+  flex: 1;
+  --img-ratio: 4 / 5;
+  aspect-ratio: var(--img-ratio);
+  object-fit: cover;
+  width: 100%;
+  border: var(--border-main);
+  box-shadow: var(--shadow-lg);
 }
 
 .about-text {
@@ -41,6 +55,7 @@
 .stat-box {
   padding: 1.5rem;
   background-color: var(--accent-3);
+  color: var(--white);
   text-align: center;
   display: flex;
   flex-direction: column;

@@ -24,8 +24,8 @@
   transition-duration: 60ms;
 }
 
-.btn-primary { background-color: var(--accent-1); }
+.btn-primary { background-color: var(--accent-1); color: var(--white); }
 .btn-secondary { background-color: var(--accent-2); }
-.btn-accent { background-color: var(--accent-3); }
-.btn-live { background-color: #a855f7; } /* Warna Lime Green super mencolok! */
+.btn-accent { background-color: var(--accent-3); color: var(--white); }
+.btn-live { background-color: var(--accent-2-dark); color: var(--white); }
 .btn-default { background-color: var(--white); }

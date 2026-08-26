@@ -1,8 +1,12 @@
 .skills-section {
   text-align: center;
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-primary);
 }
 
 .skills-section .section-title {
+  font-family: var(--font-display);
   margin-bottom: 3rem;
 }
 
@@ -14,6 +18,9 @@
 }
 
 .skill-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 1rem 2rem;
   font-family: var(--font-heading);
   font-weight: 600;
@@ -21,6 +28,13 @@
   text-transform: uppercase;
   transform: rotate(calc(var(--rotate, 0) * 1deg));
   transition: transform 0.2s ease-in-out;
+}
+
+.skill-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .skill-item:nth-child(odd) {

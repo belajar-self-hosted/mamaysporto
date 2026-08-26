@@ -58,6 +58,21 @@ export default function SiteSettingsPanel() {
     }
   };
 
+  const handleContactImageFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadSiteImage(file);
+      setForm({ ...form(), contact_image: url });
+    } catch (err) {
+      notifyError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -90,7 +105,7 @@ export default function SiteSettingsPanel() {
             <input class="neo-input" value={form().site_title} onInput={update("site_title")} />
           </div>
           <div class="admin-form-group">
-            <label>Favicon (ikon di tab browser, maks 1 MB)</label>
+            <label>Favicon (ikon di tab browser, maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 1:1</span></label>
             <Show when={form().favicon_url}>
               <img src={form().favicon_url} alt="favicon preview" class="admin-favicon-preview" />
             </Show>
@@ -150,6 +165,13 @@ export default function SiteSettingsPanel() {
           <div class="admin-form-group">
             <label>Deskripsi Contact</label>
             <textarea class="neo-input" rows="2" value={form().contact_desc} onInput={update("contact_desc")} />
+          </div>
+          <div class="admin-form-group">
+            <label>Gambar Dekoratif Contact (maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 1:1</span></label>
+            <Show when={form().contact_image}>
+              <img src={form().contact_image} alt="preview" class="admin-contact-image-preview" />
+            </Show>
+            <input type="file" accept="image/*" onChange={handleContactImageFile} disabled={uploading()} />
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">

@@ -1,11 +1,38 @@
+.contact-section {
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-primary);
+}
+
 .contact-container {
+  position: relative;
   padding: 3rem;
   background-color: var(--accent-3);
+  color: var(--white);
   max-width: 800px;
   margin: 0 auto;
 }
 
+.contact-figure {
+  position: absolute;
+  top: -1.25rem;
+  right: -1.25rem;
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border: var(--border-main);
+  box-shadow: var(--shadow-lg);
+  transform: rotate(-4deg);
+}
+
+@media (max-width: 640px) {
+  .contact-figure {
+    display: none;
+  }
+}
+
 .contact-section .section-title {
+  font-family: var(--font-display);
   margin-bottom: 1rem;
 }
 

@@ -11,14 +11,19 @@ export default function Projects() {
   // Memanggil data dari collection "projects" (sesuai nama yang Anda buat di Directus)
   const [projectsData] = createResource(() => fetchCollection("projects"));
 
-  // Array warna aksen neo-brutalism dari index.css
-  const accentColors = ["var(--accent-1)", "var(--accent-2)", "var(--accent-3)"];
+  // Pasangan {bg, text} warna aksen neo-brutalism dari index.css — dipasangkan (bukan lepas)
+  // supaya kontras teks selalu aman walau accent-1/accent-3 sekarang gelap (bukan pastel lagi).
+  const accentPairs = [
+    { bg: "var(--accent-1)", text: "var(--white)" },
+    { bg: "var(--accent-2)", text: "var(--text-main)" },
+    { bg: "var(--accent-3)", text: "var(--white)" },
+  ];
 
-  // Fungsi untuk mengambil warna secara acak
-  const getRandomColor = () => accentColors[Math.floor(Math.random() * accentColors.length)];
+  // Fungsi untuk mengambil pasangan warna secara acak
+  const getRandomAccent = () => accentPairs[Math.floor(Math.random() * accentPairs.length)];
 
   return (
-    <section id="projects" class="section projects-section" use:reveal>
+    <section id="projects" class="section projects-section">
       <h2 class="section-title" use:revealText>PROJECTS</h2>
       
       {/* Menampilkan teks loading jika data sedang diambil */}
@@ -27,16 +32,19 @@ export default function Projects() {
         {/* Menampilkan error jika ada masalah koneksi/permission */}
         <Show when={!projectsData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Gagal memuat projek: Pastikan izin Public 'Read' sudah aktif di Directus.</p>}>
           
-          <div class="projects-grid">
+          <div class="projects-grid" use:reveal>
             {/* Menggunakan <For> dari SolidJS untuk melakukan iterasi data reaktif */}
             <For each={projectsData()}>
-              {(project) => (
+              {(project, index) => {
+                const accent = getRandomAccent();
+                return (
                 <Card class="project-card">
                   <div class="project-image-wrapper">
                     <img src={project.image} alt={project.title} loading="lazy" class="project-image" />
+                    <span class="project-index">{index() + 1}</span>
                   </div>
                   {/* Memanggil fungsi random color di sini */}
-                  <div class="project-info" style={{ "background-color": getRandomColor() }}>
+                  <div class="project-info" style={{ "background-color": accent.bg, color: accent.text }}>
                     <h3 class="project-title">{project.title}</h3>
                     <p class="project-desc">{project.description}</p>
                     <div class="project-tags">
@@ -61,7 +69,8 @@ export default function Projects() {
                     </div>
                   </div>
                 </Card>
-              )}
+                );
+              }}
             </For>
           </div>
           

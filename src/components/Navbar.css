@@ -15,9 +15,10 @@
 }
 
 .navbar-brand a {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .nav-links {
@@ -41,10 +42,16 @@
   height: 3px;
   bottom: -4px;
   left: 0;
-  background-color: var(--text-main);
+  background-color: var(--accent-1);
   transform: scaleX(0);
   transform-origin: bottom right;
   transition: transform 0.25s ease-out;
+}
+
+.nav-links a:hover {
+  color: var(--accent-1);
+  transform: translateY(-2px);
+  display: inline-block;
 }
 
 .nav-links a:hover::after {
@@ -54,16 +61,18 @@
 
 .report-btn {
   background-color: var(--accent-3);
+  color: var(--white);
   padding: 0.5rem 1rem;
   border: var(--border-main);
   border-radius: var(--radius-main);
-  box-shadow: 2px 2px 0 var(--text-main);
+  box-shadow: var(--shadow-red);
 }
 
 .report-btn:hover::after {
   display: none;
 }
 .report-btn:hover {
+  color: var(--white);
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0 var(--text-main);
 }

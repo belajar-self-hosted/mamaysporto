@@ -98,6 +98,7 @@
 
 .admin-nav-item.active {
   background-color: var(--accent-3);
+  color: var(--white);
 }
 
 .admin-view-site {
@@ -177,8 +178,14 @@
 
 .admin-inline-form {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.admin-inline-form .neo-input {
+  flex: 1 1 160px;
 }
 
 .admin-list {
@@ -189,8 +196,13 @@
 
 .admin-list-item {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+}
+
+.admin-list-item .neo-input {
+  flex: 1 1 160px;
 }
 
 .admin-add-toggle {
@@ -313,12 +325,55 @@
 
 .admin-hero-image-preview {
   display: block;
-  max-width: 200px;
-  width: 100%;
-  height: auto;
+  width: 160px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
   border: var(--border-main);
   border-radius: var(--radius-main);
   margin-bottom: 0.5rem;
+}
+
+.admin-about-image-preview {
+  display: block;
+  width: 160px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  margin-bottom: 0.5rem;
+}
+
+.admin-contact-image-preview {
+  display: block;
+  width: 120px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  margin-bottom: 0.5rem;
+}
+
+.admin-skill-icon-preview {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border: var(--border-main);
+  border-radius: var(--radius-main);
+  flex-shrink: 0;
+  background: var(--bg-primary);
+}
+
+.admin-ratio-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  margin-left: 0.5rem;
+  background: var(--accent-2);
+  border: var(--border-thin);
+  color: var(--text-main);
 }
 
 .admin-textarea-large {

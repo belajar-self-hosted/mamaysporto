@@ -1,3 +1,10 @@
+.marquee-shell {
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-primary);
+  padding: 3rem 0;
+}
+
 .marquee {
   overflow: hidden;
   border-top: var(--border-main);
@@ -5,7 +12,6 @@
   background-color: var(--text-main);
   padding: 0.9rem 0;
   transform: rotate(-1.2deg) scale(1.03);
-  margin: 3rem 0;
 }
 
 .marquee:hover .marquee-track {

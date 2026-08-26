@@ -55,8 +55,8 @@ export default function ChatAI() {
   };
 
   return (
-    <section id="chatai" class="section chat-section" use:reveal>
-      <div class="chat-container neo-box">
+    <section id="chatai" class="section chat-section">
+      <div class="chat-container neo-box" use:reveal>
         <header class="chat-header">
           <h2>YOWMAN</h2>
           <p>Asisten Pribadi Tama</p>

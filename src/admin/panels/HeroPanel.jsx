@@ -67,7 +67,7 @@ export default function HeroPanel() {
       <Show when={form()} fallback={<p>Memuat...</p>}>
         <form class="admin-form" onSubmit={handleSubmit}>
           <div class="admin-form-group">
-            <label>Foto Profil (rasio mengikuti gambar yang diupload, maks 1 MB)</label>
+            <label>Foto Profil (maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 1:1</span></label>
             <Show when={form().image}>
               <img src={form().image} alt="preview" class="admin-hero-image-preview" />
             </Show>

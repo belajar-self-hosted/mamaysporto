@@ -1,5 +1,5 @@
 import { createResource, createSignal, createEffect, onCleanup, Show } from "solid-js";
-import { fetchCollection, updateSingleton } from "../../lib/api";
+import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function AboutPanel() {
@@ -7,6 +7,7 @@ export default function AboutPanel() {
   const [form, setForm] = createSignal(null);
   const [original, setOriginal] = createSignal(null);
   const [saving, setSaving] = createSignal(false);
+  const [uploading, setUploading] = createSignal(false);
 
   createEffect(() => {
     if (about() && !form()) {
@@ -24,6 +25,21 @@ export default function AboutPanel() {
   onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+
+  const handleFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadSiteImage(file);
+      setForm({ ...form(), image: url });
+    } catch (err) {
+      notifyError(err.message);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,6 +64,15 @@ export default function AboutPanel() {
       <h2>About Section</h2>
       <Show when={form()} fallback={<p>Memuat...</p>}>
         <form class="admin-form" onSubmit={handleSubmit}>
+          <div class="admin-form-group">
+            <label>Gambar Manifesto (maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 4:5</span></label>
+            <Show when={form().image}>
+              <img src={form().image} alt="preview" class="admin-about-image-preview" />
+            </Show>
+            <input type="file" accept="image/*" onChange={handleFile} disabled={uploading()} />
+            {uploading() && <p class="admin-hint">Mengupload...</p>}
+          </div>
+
           <div class="admin-form-group">
             <label>Konten (HTML diperbolehkan, mis. &lt;strong&gt;)</label>
             <textarea class="neo-input" rows="6" value={form().content} onInput={update("content")} />
@@ -84,7 +109,7 @@ export default function AboutPanel() {
             </div>
           </div>
 
-          <button type="submit" class="neo-btn btn-primary" disabled={saving()}>
+          <button type="submit" class="neo-btn btn-primary" disabled={saving() || uploading()}>
             {saving() ? "Menyimpan..." : "Simpan"}
           </button>
         </form>

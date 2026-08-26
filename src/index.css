@@ -1,27 +1,44 @@
 :root {
   /* Colors */
-  --bg-primary: #f4f4f0;
-  --accent-1: #ff5470;
-  --accent-2: #00ebc7;
-  --accent-3: #fde24f;
-  --text-main: #0b0c10;
+  --bg-primary: #fff9ed;
+  --accent-1: #b7102a;
+  --accent-1-light: #db313f;
+  --accent-2: #8cf5e4;
+  --accent-2-dark: #006a60;
+  --accent-3: #a96428;
+  --accent-3-dark: #8b4c11;
+  --text-main: #1d1b15;
   --white: #ffffff;
-  
+  --surface-var: #e8e2d7;
+  --surface-high: #ede7dd;
+  --surface-highest: #dfd9cf;
+  --accent-ai: #a855f7;
+
   /* Borders & Shadows */
-  --border-width: 3px;
+  --border-width: 4px;
+  --border-width-sm: 2px;
   --border-main: var(--border-width) solid var(--text-main);
+  --border-thin: var(--border-width-sm) solid var(--text-main);
+  --shadow-sm: 4px 4px 0px var(--text-main);
   --shadow-main: 4px 4px 0px var(--text-main);
-  --shadow-hover: 6px 6px 0px var(--text-main);
-  --radius-main: 4px;
-  
+  --shadow-hover: 8px 8px 0px var(--text-main);
+  --shadow-lg: 12px 12px 0px var(--text-main);
+  --shadow-xl: 16px 16px 0px var(--text-main);
+  --shadow-red: 4px 4px 0px var(--accent-1);
+  --shadow-red-lg: 8px 8px 0px var(--accent-1);
+  --radius-main: 0px;
+
   /* Typography */
+  --font-display: 'Anton', sans-serif;
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-body: 'Work Sans', system-ui, sans-serif;
 
   /* Motion (dipakai bareng oleh CSS transition & preset animejs di src/lib/motion.js) */
   --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-press: cubic-bezier(0.2, 0, 0, 1);
   --duration-fast: 180ms;
   --duration-base: 320ms;
+  --duration-snap: 100ms;
 }
 
 * {
@@ -78,6 +95,75 @@ button {
   margin: 0 auto;
 }
 
+/* Neobrutalism v2 — shadow scale, press utility, collage mask, texture overlay, badge/eyebrow, image-fit */
+.neo-shadow-sm { box-shadow: var(--shadow-sm); }
+.neo-shadow-lg { box-shadow: var(--shadow-lg); }
+.neo-shadow-xl { box-shadow: var(--shadow-xl); }
+.neo-shadow-red { box-shadow: var(--shadow-red); }
+.neo-shadow-red-lg { box-shadow: var(--shadow-red-lg); }
+
+.neo-press {
+  transition: transform var(--duration-snap) var(--ease-press), box-shadow var(--duration-snap) var(--ease-press);
+}
+.neo-press:hover { transform: translate(2px, 2px); box-shadow: var(--shadow-sm); }
+.neo-press:active { transform: translate(4px, 4px); box-shadow: none; }
+
+.neo-collage-mask { clip-path: polygon(10% 0, 100% 15%, 90% 100%, 0 85%); }
+.neo-collage-mask-alt { clip-path: polygon(0 5%, 95% 0, 100% 95%, 5% 100%); }
+
+/* z-index: 50, bukan 99 seperti di referensi sumur-creative — di referensi nilai itu duduk DI ATAS
+   navbar & semua modal (z-50), jadi grain menutupi/mengeruhkan form dan nav setiap kali dibuka.
+   Grain di atas section biasa memang disengaja (bagian dari look kertas), tapi navbar & modal butuh
+   kontras penuh. Modal di sini sudah aman (.modal-overlay z-index:1000, jauh di atas 50); Navbar
+   diberi z-index eksplisit >= 60 (lihat Navbar.css) supaya tetap di atas texture-overlay ini. */
+.neo-texture-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.neo-badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: var(--border-thin);
+  box-shadow: var(--shadow-sm);
+  padding: 0.35rem 0.9rem;
+  background: var(--white);
+  transform: rotate(var(--badge-rotate, -2deg));
+}
+
+.neo-eyebrow {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-2-dark);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* Gambar yang otomatis fit ke rasio grid (Hero/About/Contact/Skills) — set --img-ratio per pemakaian */
+.neo-img-fit {
+  aspect-ratio: var(--img-ratio, 1/1);
+  object-fit: cover;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.neo-img-fit--contain { object-fit: contain; }
+
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-1); border: 2px solid var(--text-main); }
+
 @media (max-width: 768px) {
   .section {
     padding: 3rem 1.5rem;
@@ -127,12 +213,12 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(11, 12, 16, 0.6);
+  background-color: rgba(29, 27, 21, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
 }
 
 .modal-box {
@@ -141,7 +227,7 @@ button {
   max-width: 450px;
   display: flex;
   flex-direction: column;
-  box-shadow: 8px 8px 0 var(--text-main);
+  box-shadow: var(--shadow-xl);
 }
 
 .modal-header {
@@ -157,17 +243,23 @@ button {
 }
 
 .modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
+  background: var(--accent-1);
+  border: var(--border-thin);
+  border-color: var(--text-main);
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  color: var(--text-main);
+  color: var(--white);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close:hover {
-  color: var(--accent-1);
+  background: var(--text-main);
 }
 
 .modal-body {

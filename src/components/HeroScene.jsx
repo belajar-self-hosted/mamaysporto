@@ -2,7 +2,7 @@ import { onMount, onCleanup, createSignal, Show } from "solid-js";
 import { prefersReducedMotion } from "../lib/motion";
 import "./HeroScene.css";
 
-const ACCENT_HEX = [0xff5470, 0x00ebc7, 0xfde24f, 0xffffff];
+const ACCENT_HEX = [0xb7102a, 0x8cf5e4, 0xa96428, 0xffffff];
 
 /**
  * Showpiece Three.js: objek low-poly flat-shaded (tanpa lighting realistis) yang berputar
@@ -75,7 +75,7 @@ export default function HeroScene() {
         scene.add(mesh);
 
         edges = new THREE.WireframeGeometry(geometry);
-        lineMaterial = new THREE.LineBasicMaterial({ color: 0x0b0c10 });
+        lineMaterial = new THREE.LineBasicMaterial({ color: 0x1d1b15 });
         mesh.add(new THREE.LineSegments(edges, lineMaterial));
 
         if (!reduceMotion) window.addEventListener("mousemove", handlePointerMove);

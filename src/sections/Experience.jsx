@@ -9,13 +9,13 @@ export default function Experience() {
   const [experienceData] = createResource(() => fetchCollection("experience"));
 
   return (
-    <section id="experience" class="section experience-section" use:reveal>
+    <section id="experience" class="section experience-section">
       <h2 class="section-title" use:revealText>EXPERIENCE</h2>
       
       <Show when={!experienceData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat pengalaman dari server...</p>}>
         <Show when={!experienceData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Gagal memuat pengalaman: Pastikan izin Public 'Read' aktif.</p>}>
           
-          <div class="timeline">
+          <div class="timeline" use:reveal>
             <For each={experienceData()}>
               {(exp, index) => (
                 <div class="timeline-item neo-box">

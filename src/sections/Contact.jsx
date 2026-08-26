@@ -22,8 +22,11 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" class="section contact-section" use:reveal>
-      <div class="contact-container neo-box">
+    <section id="contact" class="section contact-section">
+      <div class="contact-container neo-box" use:reveal>
+        <Show when={settings()?.contact_image}>
+          <img class="contact-figure neo-collage-mask-alt" src={settings().contact_image} alt="" />
+        </Show>
         <h2 class="section-title">{settings()?.contact_title || "GET IN TOUCH"}</h2>
         <p class="contact-desc">
           {settings()?.contact_desc || "Whether you have a question, a project idea, or just want to say hi, my inbox is always open."}

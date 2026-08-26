@@ -4,6 +4,7 @@ import { normalizeUrl } from "../lib/url";
 import Button from "../components/Button";
 import { reveal } from "../lib/scrollReveal";
 import { revealText } from "../lib/textReveal";
+import { stickyReveal } from "../lib/stickyReveal";
 import FloatingSticker from "../components/FloatingSticker";
 import HeroScene from "../components/HeroScene";
 import { burst } from "../lib/clickBurst";
@@ -15,7 +16,7 @@ export default function Hero() {
   const [heroData] = createResource(() => fetchCollection("hero"));
 
   return (
-    <section id="hero" class="section hero-section" use:reveal>
+    <section id="hero" class="section hero-section" use:reveal use:stickyReveal>
       <div class="hero-content">
         <Show when={!heroData.loading} fallback={<h1 class="hero-title">Memuat...</h1>}>
           <Show when={!heroData.error} fallback={<h1 class="hero-title">Gagal memuat data.</h1>}>
@@ -78,7 +79,7 @@ export default function Hero() {
       <FloatingSticker
         rotate={5}
         depth={10}
-        style={{ bottom: "6%", right: "-10px", "background-color": "var(--accent-3)" }}
+        style={{ bottom: "6%", right: "-10px", "background-color": "var(--accent-3)", color: "#fff" }}
       >
         ✦ Available
       </FloatingSticker>

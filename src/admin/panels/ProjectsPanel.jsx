@@ -76,7 +76,7 @@ function ProjectForm(props) {
       </div>
 
       <div class="admin-form-group">
-        <label>Gambar (maks 1 MB)</label>
+        <label>Gambar (maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 16:9</span></label>
         <Show when={form().image}>
           <img src={form().image} alt="preview" class="admin-image-preview" />
         </Show>

@@ -1,20 +1,32 @@
 .hero-section {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 4rem;
-  min-height: 80vh;
+  height: 100vh;
+  overflow: hidden;
+  --reveal-progress: 0;
 }
 
 .hero-content {
   flex: 1;
+  transition: transform 0.05s linear, opacity 0.05s linear;
+  transform: scale(calc(1 - var(--reveal-progress) * 0.08));
+  opacity: calc(1 - var(--reveal-progress) * 0.6);
 }
 
 .hero-title {
+  font-family: var(--font-display);
   font-size: 4rem;
   text-transform: uppercase;
   margin-bottom: 1.5rem;
+}
+
+.hero-content .neo-badge {
+  margin-bottom: 1rem;
 }
 
 .highlight-text {
@@ -23,9 +35,10 @@
 
 .highlight-box {
   background-color: var(--accent-3);
+  color: var(--white);
   padding: 0 0.5rem;
   border: var(--border-main);
-  box-shadow: 4px 4px 0 var(--text-main);
+  box-shadow: var(--shadow-sm);
   display: inline-block;
   transform: rotate(-2deg);
 }
@@ -42,7 +55,7 @@
 }
 
 .btn-ai {
-  background-color: #a855f7 !important;
+  background-color: var(--accent-ai) !important;
   color: #fff !important;
   border-color: var(--text-main) !important;
   box-shadow: var(--shadow-main) !important;
@@ -59,31 +72,47 @@
   max-width: 400px;
   background-color: var(--accent-2);
   padding: 1rem;
-  transform: rotate(2deg);
+  transition: transform 0.05s linear, opacity 0.05s linear;
+  transform: rotate(2deg) scale(calc(1 - var(--reveal-progress) * 0.08));
+  opacity: calc(1 - var(--reveal-progress) * 0.6);
 }
 
 .hero-image {
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
   border: var(--border-main);
   display: block;
 }
 
 @media (max-width: 768px) {
   .hero-section {
+    position: static;
+    height: auto;
+    overflow: visible;
     flex-direction: column-reverse;
     text-align: center;
     gap: 2rem;
   }
-  
+
+  .hero-content,
+  .hero-image-container {
+    transform: none;
+    opacity: 1;
+  }
+
+  .hero-image-container {
+    transform: rotate(2deg);
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-cta {
     justify-content: center;
   }
-  
+
   .hero-subtitle {
     margin: 0 auto 2rem;
   }

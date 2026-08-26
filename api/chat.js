@@ -63,12 +63,16 @@ export default async function handler(req, res) {
 
     const systemPrompt = await getSystemPrompt();
 
-    const result = await streamText({
+    const result = streamText({
       model: openrouter("google/gemini-2.5-flash-lite"),
       system: systemPrompt,
       messages: coreMessages,
       maxOutputTokens: 300,
       temperature: 0.7,
+      onError: ({ error }) => {
+        console.error("Chat stream error:", error);
+        res.write("Maaf, asisten AI sedang mengalami gangguan. Silakan hubungi saya via Instagram.");
+      },
     });
 
     result.pipeTextStreamToResponse(res);

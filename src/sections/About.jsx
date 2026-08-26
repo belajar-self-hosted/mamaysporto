@@ -11,16 +11,20 @@ export default function About() {
   const [aboutData] = createResource(() => fetchCollection("about"));
 
   return (
-    <section id="about" class="section about-section" use:reveal>
-      <div class="about-container neo-box">
+    <section id="about" class="section about-section">
+      <div class="about-container neo-box" use:reveal>
         <h2 class="section-title" use:revealText>ABOUT ME</h2>
         
         <Show when={!aboutData.loading} fallback={<p style={{ "text-align": "center" }}>Memuat profil...</p>}>
           <Show when={!aboutData.error} fallback={<p style={{ color: "red", "text-align": "center" }}>Gagal memuat profil: Pastikan izin Public 'Read' aktif.</p>}>
             <div class="about-content">
+              <Show when={aboutData().image}>
+                <img class="about-figure neo-collage-mask" src={aboutData().image} alt="" />
+              </Show>
+
               {/* innerHTML digunakan agar format tulisan tebal (bold) atau link (a href) dari WYSIWYG Directus bisa tampil sempurna */}
               <div class="about-text" innerHTML={aboutData().content}></div>
-              
+
               <div class="about-stats">
                 <div class="stat-box neo-box">
                   <span class="stat-number">{aboutData().stat_1_number}</span>

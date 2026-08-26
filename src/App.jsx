@@ -15,6 +15,7 @@ import Contact from "./sections/Contact";
 export default function App() {
   return (
     <>
+      <div class="neo-texture-overlay" aria-hidden="true"></div>
       <CustomCursor />
       <Navbar />
       <WelcomeModal />
