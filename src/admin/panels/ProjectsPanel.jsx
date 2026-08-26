@@ -3,34 +3,45 @@ import { fetchCollection, insertRow, updateRow, deleteRow, uploadProjectImage } 
 import { normalizeUrl } from "../../lib/url";
 import { notifySuccess, notifyError, setDirty, confirmAction, confirmDiscardIfDirty } from "../adminStore";
 
-const EMPTY = { title: "", description: "", image: "", link: "", github: "", tags: [] };
+const EMPTY = { title: "", description: "", image: "", link: "", github: "", tags: [], category: "live" };
 
-function snapshotProject(form, tagsText) {
+function snapshotProject(form) {
   return JSON.stringify({
     title: form.title,
     description: form.description,
     image: form.image,
     link: form.link,
     github: form.github,
-    tags: tagsText,
+    tags: form.tags,
+    category: form.category,
   });
 }
 
 function ProjectForm(props) {
   const [form, setForm] = createSignal({ ...EMPTY, ...props.initial });
-  const [tagsText, setTagsText] = createSignal((props.initial?.tags || []).join(", "));
+  const [availableTags] = createResource(() => fetchCollection("project_tags"));
   const [busy, setBusy] = createSignal(false);
   const [uploading, setUploading] = createSignal(false);
 
-  const initialSnapshot = snapshotProject({ ...EMPTY, ...props.initial }, (props.initial?.tags || []).join(", "));
+  const initialSnapshot = snapshotProject({ ...EMPTY, ...props.initial });
 
   createEffect(() => {
-    setDirty(snapshotProject(form(), tagsText()) !== initialSnapshot);
+    setDirty(snapshotProject(form()) !== initialSnapshot);
   });
 
   onCleanup(() => setDirty(false));
 
   const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+
+  // Bangun ulang array tags dalam urutan tetap sesuai daftar master (project_tags),
+  // bukan urutan klik — supaya snapshot dirty-check stabil.
+  const toggleTag = (name) => {
+    const selected = new Set(form().tags || []);
+    if (selected.has(name)) selected.delete(name);
+    else selected.add(name);
+    const orderedNames = (availableTags() || []).map((t) => t.name);
+    setForm({ ...form(), tags: orderedNames.filter((n) => selected.has(n)) });
+  };
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -51,12 +62,10 @@ function ProjectForm(props) {
     e.preventDefault();
     setBusy(true);
     try {
-      const tags = tagsText().split(",").map((t) => t.trim()).filter(Boolean);
       await props.onSubmit({
         ...form(),
         link: normalizeUrl(form().link),
         github: normalizeUrl(form().github),
-        tags,
       });
     } catch (err) {
       notifyError(err.message);
@@ -102,8 +111,52 @@ function ProjectForm(props) {
       </div>
 
       <div class="admin-form-group">
-        <label>Tags (pisahkan dengan koma)</label>
-        <input class="neo-input" value={tagsText()} onInput={(e) => setTagsText(e.target.value)} />
+        <label>Tags</label>
+        <Show
+          when={(availableTags() || []).length > 0}
+          fallback={<p class="admin-hint">Belum ada tag, tambahkan dulu di tab Tags.</p>}
+        >
+          <div class="admin-checkbox-group">
+            <For each={availableTags()}>
+              {(tag) => (
+                <label class="admin-checkbox-option">
+                  <input
+                    type="checkbox"
+                    checked={(form().tags || []).includes(tag.name)}
+                    onChange={() => toggleTag(tag.name)}
+                  />
+                  {tag.name}
+                </label>
+              )}
+            </For>
+          </div>
+        </Show>
+      </div>
+
+      <div class="admin-form-group">
+        <label>Status Deployment</label>
+        <div class="admin-radio-group">
+          <label class="admin-radio-option">
+            <input
+              type="radio"
+              name="category"
+              value="live"
+              checked={form().category === "live"}
+              onChange={() => setForm({ ...form(), category: "live" })}
+            />
+            Live
+          </label>
+          <label class="admin-radio-option">
+            <input
+              type="radio"
+              name="category"
+              value="localhost"
+              checked={form().category === "localhost"}
+              onChange={() => setForm({ ...form(), category: "localhost" })}
+            />
+            Localhost
+          </label>
+        </div>
       </div>
 
       <div class="admin-form-actions">
@@ -196,7 +249,10 @@ export default function ProjectsPanel() {
                       </Show>
                       <div class="admin-row-info">
                         <strong>{item.title}</strong>
-                        <span class="admin-row-sub">{(item.tags || []).join(", ")}</span>
+                        <span class="admin-row-sub">
+                          {item.category === "localhost" ? "Localhost" : "Live"}
+                          {(item.tags || []).length > 0 ? ` • ${(item.tags || []).join(", ")}` : ""}
+                        </span>
                       </div>
                       <div class="admin-row-actions">
                         <button class="neo-btn btn-default" onClick={() => toggle(item.id)}>Edit</button>

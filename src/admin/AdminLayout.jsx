@@ -7,6 +7,7 @@ import HeroPanel from "./panels/HeroPanel";
 import AboutPanel from "./panels/AboutPanel";
 import SkillsPanel from "./panels/SkillsPanel";
 import ProjectsPanel from "./panels/ProjectsPanel";
+import TagsPanel from "./panels/TagsPanel";
 import ExperiencePanel from "./panels/ExperiencePanel";
 import SiteSettingsPanel from "./panels/SiteSettingsPanel";
 
@@ -15,6 +16,7 @@ const TABS = [
   { key: "about", label: "About", Component: AboutPanel },
   { key: "skills", label: "Skills", Component: SkillsPanel },
   { key: "projects", label: "Projects", Component: ProjectsPanel },
+  { key: "tags", label: "Tags", Component: TagsPanel },
   { key: "experience", label: "Experience", Component: ExperiencePanel },
   { key: "settings", label: "Site Settings", Component: SiteSettingsPanel },
 ];
