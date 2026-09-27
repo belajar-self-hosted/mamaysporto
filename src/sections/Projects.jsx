@@ -63,7 +63,7 @@ export default function Projects() {
             when={filteredProjects().length > 0}
             fallback={<p class="projects-empty">Belum ada project di kategori ini.</p>}
           >
-            <div class="projects-grid" use:reveal>
+            <div class="projects-grid" use:reveal={{ threshold: 0.02 }}>
               {/* Menggunakan <For> dari SolidJS untuk melakukan iterasi data reaktif */}
               <For each={filteredProjects()}>
                 {(project, index) => {
