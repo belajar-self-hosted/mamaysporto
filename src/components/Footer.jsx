@@ -31,7 +31,7 @@ export default function Footer() {
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; {year} Fannandya Sutan Sakti Pratama. Built with SolidJS.</p>
+        <p>&copy; {year} Fannandya Sutan Sakti Pratama. Built with 💞.</p>
       </div>
     </footer>
   );
