@@ -3,9 +3,9 @@ import Footer from "./components/Footer";
 import WelcomeModal from "./components/WelcomeModal";
 import CustomCursor from "./components/CustomCursor";
 import Marquee from "./components/Marquee";
-import ChatTicker from "./components/ChatTicker";
+// import ChatTicker from "./components/ChatTicker"; // Yowman ticker nonaktif
 import Hero from "./sections/Hero";
-import ChatAI from "./sections/ChatAI";
+// import ChatAI from "./sections/ChatAI"; // Yowman chat nonaktif
 import About from "./sections/About";
 import Skills from "./sections/Skills";
 import Projects from "./sections/Projects";
@@ -21,8 +21,8 @@ export default function App() {
       <WelcomeModal />
       <main>
         <Hero />
-        <ChatAI />
-        <ChatTicker />
+        {/* <ChatAI /> */}
+        {/* <ChatTicker /> */}
         <About />
         <Skills />
         <Marquee />
