@@ -1,0 +1,46 @@
+name: Deploy Production (LXC 10018)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build & Deploy on LXC 10018
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Ensure environment configuration
+        run: |
+          if [ ! -f .env ]; then
+            if [ -f /opt/mamaysporto/.env ]; then
+              echo "Copying persistent /opt/mamaysporto/.env..."
+              cp /opt/mamaysporto/.env .env
+            else
+              echo "Warning: .env not found, using .env.example..."
+              cp .env.example .env
+            fi
+          fi
+
+      - name: Deploy via Docker Compose
+        run: |
+          docker compose up -d --build --remove-orphans
+
+      - name: Healthcheck Verification
+        run: |
+          echo "Verifying application health..."
+          for i in {1..30}; do
+            RES=$(curl -s http://localhost:3000/api/health || true)
+            if echo "$RES" | grep -q '"status":"ok"'; then
+              echo "==> Healthcheck PASSED: $RES"
+              exit 0
+            fi
+            echo "Waiting for container (attempt $i/30)..."
+            sleep 2
+          done
+          echo "==> Healthcheck FAILED!"
+          docker compose logs --tail=50
+          exit 1
