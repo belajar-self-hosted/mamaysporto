@@ -61,7 +61,7 @@ export async function handleLogin(req, res) {
     });
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: err.message || "Internal server error" });
   }
 }
 
