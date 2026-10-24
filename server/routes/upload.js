@@ -29,6 +29,9 @@ const allowedMimes = new Set([
   "image/webp",
   "image/gif",
   "image/svg+xml",
+  "image/x-icon",
+  "image/vnd.microsoft.icon",
+  "image/ico",
 ]);
 
 const upload = multer({

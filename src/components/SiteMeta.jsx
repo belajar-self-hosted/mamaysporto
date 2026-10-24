@@ -1,15 +1,6 @@
 import { createResource, createEffect } from "solid-js";
 import { fetchCollection } from "../lib/api";
-
-function setFavicon(url) {
-  let link = document.querySelector('link[rel="icon"]');
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = "icon";
-    document.head.appendChild(link);
-  }
-  link.href = url;
-}
+import { setFavicon } from "../lib/favicon";
 
 /** Menerapkan judul tab browser & favicon dari site_settings (tanpa render DOM). */
 export default function SiteMeta() {

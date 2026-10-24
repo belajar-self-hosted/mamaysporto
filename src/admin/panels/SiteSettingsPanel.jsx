@@ -1,7 +1,8 @@
-import { createResource, createSignal, createEffect, onCleanup, For, Show } from "solid-js";
+import { createResource, createSignal, createEffect, onCleanup, Index, Show } from "solid-js";
 import { fetchCollection, updateSingleton, uploadSiteImage } from "../../lib/api";
 import { normalizeUrl } from "../../lib/url";
 import SocialIcon, { platformLabel } from "../../lib/socialIcons.jsx";
+import { setFavicon } from "../../lib/favicon";
 import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function SiteSettingsPanel() {
@@ -50,6 +51,7 @@ export default function SiteSettingsPanel() {
     try {
       const url = await uploadSiteImage(file);
       setForm({ ...form(), favicon_url: url });
+      setFavicon(url);
     } catch (err) {
       notifyError(err.message);
     } finally {
@@ -85,6 +87,8 @@ export default function SiteSettingsPanel() {
       setForm({ ...updated });
       setOriginal({ ...updated });
       setDirty(false);
+      if (updated.favicon_url) setFavicon(updated.favicon_url);
+      if (updated.site_title) document.title = updated.site_title;
       notifySuccess("Site settings berhasil disimpan.");
       refetch();
     } catch (err) {
@@ -130,27 +134,27 @@ export default function SiteSettingsPanel() {
               Tambahkan link sosial media apa saja (GitHub, LinkedIn, Instagram, TikTok, YouTube, dll). Ikon di homepage otomatis menyesuaikan berdasarkan URL yang kamu masukkan.
             </p>
             <div class="admin-social-list">
-              <For each={form().social_links || []}>
+              <Index each={form().social_links || []}>
                 {(link, index) => (
                   <div class="admin-social-row">
-                    <span class="admin-social-icon"><SocialIcon url={link.url} size={20} /></span>
+                    <span class="admin-social-icon"><SocialIcon url={link().url} size={20} /></span>
                     <input
                       class="neo-input"
                       placeholder="https://..."
-                      value={link.url}
-                      onInput={(e) => updateSocialLink(index(), e.target.value)}
+                      value={link().url}
+                      onInput={(e) => updateSocialLink(index, e.target.value)}
                     />
-                    <span class="admin-social-platform">{platformLabel(link.url)}</span>
+                    <span class="admin-social-platform">{platformLabel(link().url)}</span>
                     <button
                       type="button"
                       class="neo-btn btn-accent"
-                      onClick={() => removeSocialLink(index())}
+                      onClick={() => removeSocialLink(index)}
                     >
                       Hapus
                     </button>
                   </div>
                 )}
-              </For>
+              </Index>
             </div>
             <button type="button" class="neo-btn btn-default admin-add-toggle" onClick={addSocialLink}>
               + Tambah Social Media
