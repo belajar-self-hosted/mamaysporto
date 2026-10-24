@@ -1,0 +1,17 @@
+# Traefik v3 Dynamic Configuration for profile.mamay.my.id
+# Target: LXC 10018 (IP 192.168.0.18:3000)
+# Location on LXC 10080: /opt/ingress/dynamic/profile-mamay.yml
+
+http:
+  routers:
+    profile-mamay-router:
+      rule: "Host(`profile.mamay.my.id`)"
+      entryPoints:
+        - web
+      service: profile-mamay-service
+
+  services:
+    profile-mamay-service:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.0.18:3000"

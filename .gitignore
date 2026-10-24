@@ -27,5 +27,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-/opt
+# Homelab documentation and ingress configs
+# /opt (uncommented to allow tracking SSOT and configs)
