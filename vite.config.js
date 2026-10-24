@@ -7,8 +7,12 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 3333,
     proxy: {
-      "/api/chat": {
-        target: "http://localhost:3001",
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+      "/uploads": {
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },

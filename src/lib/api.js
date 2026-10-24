@@ -1,105 +1,127 @@
-import { supabase } from "./supabase";
+// REST API Client for mamaysporto
+import { getStoredToken } from "./auth";
 
-const SINGLETON_TABLES = new Set(["hero", "about", "site_settings"]);
+function getAuthHeaders() {
+  const token = getStoredToken();
+  const headers = { "Content-Type": "application/json" };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
 
 /**
- * Ambil semua item dari sebuah tabel Supabase.
- *
+ * Ambil semua item dari sebuah koleksi / tabel CMS.
  * Singleton tables (hero, about, site_settings) mengembalikan object langsung.
- * Collection tables (skills, projects, experience) mengembalikan array.
+ * Collection tables (skills, projects, experience, project_tags) mengembalikan array.
  */
 export async function fetchCollection(collectionName) {
-  const { data, error } = await supabase
-    .from(collectionName)
-    .select("*");
-
-  if (error) {
-    throw new Error(`Gagal mengambil data "${collectionName}": ${error.message}`);
+  const res = await fetch(`/api/data/${collectionName}`);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || `Gagal mengambil data "${collectionName}".`);
   }
-
-  if (SINGLETON_TABLES.has(collectionName)) {
-    return data && data.length > 0 ? data[0] : null;
-  }
-
-  return data || [];
+  return res.json();
 }
 
 /** Update singleton row (id = 1) milik sebuah tabel. Butuh sesi admin login. */
 export async function updateSingleton(table, patch) {
-  const { data, error } = await supabase
-    .from(table)
-    .update(patch)
-    .eq("id", 1)
-    .select()
-    .single();
+  const res = await fetch(`/api/data/${table}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(patch),
+  });
 
-  if (error) throw new Error(`Gagal menyimpan "${table}": ${error.message}`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `Gagal menyimpan "${table}".`);
+  }
   return data;
 }
 
 /** Tambah row baru ke collection table. Butuh sesi admin login. */
 export async function insertRow(table, row) {
-  const { data, error } = await supabase
-    .from(table)
-    .insert(row)
-    .select()
-    .single();
+  const res = await fetch(`/api/data/${table}`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(row),
+  });
 
-  if (error) throw new Error(`Gagal menambah data "${table}": ${error.message}`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `Gagal menambah data "${table}".`);
+  }
   return data;
 }
 
 /** Update row collection table berdasarkan id. Butuh sesi admin login. */
 export async function updateRow(table, id, patch) {
-  // Buang id/created_at kalau ikut terbawa dari form (mis. hasil spread row lama) —
-  // "id" adalah generated identity column, Postgres menolak kalau di-SET manual.
   const { id: _id, created_at: _createdAt, ...safePatch } = patch;
 
-  const { data, error } = await supabase
-    .from(table)
-    .update(safePatch)
-    .eq("id", id)
-    .select()
-    .single();
+  const res = await fetch(`/api/data/${table}/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(safePatch),
+  });
 
-  if (error) throw new Error(`Gagal menyimpan "${table}": ${error.message}`);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || `Gagal menyimpan "${table}".`);
+  }
   return data;
 }
 
 /** Hapus row collection table berdasarkan id. Butuh sesi admin login. */
 export async function deleteRow(table, id) {
-  const { error } = await supabase.from(table).delete().eq("id", id);
-  if (error) throw new Error(`Gagal menghapus data "${table}": ${error.message}`);
+  const res = await fetch(`/api/data/${table}/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Gagal menghapus data "${table}".`);
+  }
 }
 
-const MAX_IMAGE_BYTES = 1024 * 1024; // 1MB
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
 
-/** Upload gambar ke sebuah bucket Supabase Storage (max 1MB), lalu kembalikan public URL-nya. */
-async function uploadImage(bucket, file) {
+/** Upload gambar ke server lokal, lalu kembalikan URL-nya. */
+async function uploadImage(_bucket, file) {
   if (!file) throw new Error("File tidak ditemukan.");
   if (file.size > MAX_IMAGE_BYTES) {
-    throw new Error("Ukuran gambar maksimal 1 MB.");
+    throw new Error("Ukuran gambar maksimal 5 MB.");
   }
 
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const token = getStoredToken();
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const { error: uploadError } = await supabase.storage
-    .from(bucket)
-    .upload(path, file, { cacheControl: "3600", upsert: false });
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
-  if (uploadError) throw new Error(`Gagal upload gambar: ${uploadError.message}`);
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers,
+    body: formData,
+  });
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || "Gagal mengunggah gambar ke server.");
+  }
+
+  return data.url;
 }
 
-/** Upload gambar project ke Supabase Storage (bucket project-images, max 1MB). */
+/** Upload gambar project ke server lokal. */
 export function uploadProjectImage(file) {
   return uploadImage("project-images", file);
 }
 
-/** Upload gambar situs (mis. foto Hero) ke Supabase Storage (bucket site-images, max 1MB). */
+/** Upload gambar situs (mis. foto Hero/Favicon) ke server lokal. */
 export function uploadSiteImage(file) {
   return uploadImage("site-images", file);
 }
