@@ -18,9 +18,21 @@ export default function Projects() {
   const [projectsData] = createResource(() => fetchCollection("projects"));
   const [activeCategory, setActiveCategory] = createSignal("all");
 
-  const filteredProjects = () => {
+  const sortedAndFilteredProjects = () => {
     const all = projectsData() || [];
-    return activeCategory() === "all" ? all : all.filter((p) => p.category === activeCategory());
+    const filtered = activeCategory() === "all" ? all : all.filter((p) => p.category === activeCategory());
+
+    return [...filtered].sort((a, b) => {
+      const hasImageA = Boolean(a.image && a.image.trim() !== "");
+      const hasImageB = Boolean(b.image && b.image.trim() !== "");
+
+      // 1. Prioritaskan project yang memiliki foto di posisi atas
+      if (hasImageA && !hasImageB) return -1;
+      if (!hasImageA && hasImageB) return 1;
+
+      // 2. Urutan sekunder: ID terbaru ke terlama (ID descending)
+      return (Number(b.id) || 0) - (Number(a.id) || 0);
+    });
   };
 
   // Pasangan {bg, text} warna aksen neo-brutalism dari index.css — dipasangkan (bukan lepas)
@@ -60,18 +72,27 @@ export default function Projects() {
           </div>
 
           <Show
-            when={filteredProjects().length > 0}
+            when={sortedAndFilteredProjects().length > 0}
             fallback={<p class="projects-empty">Belum ada project di kategori ini.</p>}
           >
             <div class="projects-grid" use:reveal={{ threshold: 0.02 }}>
               {/* Menggunakan <For> dari SolidJS untuk melakukan iterasi data reaktif */}
-              <For each={filteredProjects()}>
+              <For each={sortedAndFilteredProjects()}>
                 {(project, index) => {
                   const accent = getRandomAccent();
                   return (
                   <Card class="project-card">
                     <div class="project-image-wrapper">
-                      <img src={project.image} alt={project.title} loading="lazy" class="project-image" />
+                      <Show
+                        when={project.image && project.image.trim() !== ""}
+                        fallback={
+                          <div class="project-image-placeholder">
+                            <span class="project-placeholder-title">{project.title}</span>
+                          </div>
+                        }
+                      >
+                        <img src={project.image} alt={project.title} loading="lazy" class="project-image" />
+                      </Show>
                       <span class="project-index">{index() + 1}</span>
                     </div>
                     {/* Memanggil fungsi random color di sini */}
