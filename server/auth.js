@@ -72,3 +72,63 @@ export async function handleMe(req, res) {
 export async function handleLogout(req, res) {
   return res.json({ message: "Logged out successfully" });
 }
+
+export async function handleUpdateAccount(req, res) {
+  try {
+    const adminId = req.admin?.id;
+    if (!adminId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const { email, password } = req.body || {};
+    if (!email || typeof email !== "string" || !email.includes("@")) {
+      return res.status(400).json({ error: "Alamat email tidak valid." });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Pastikan email tidak dipakai oleh admin lain
+    const checkEmail = await query("SELECT id FROM admins WHERE email = $1 AND id != $2 LIMIT 1", [
+      normalizedEmail,
+      adminId,
+    ]);
+    if (checkEmail.rows.length > 0) {
+      return res.status(409).json({ error: "Email sudah digunakan oleh akun lain." });
+    }
+
+    if (password) {
+      if (typeof password !== "string" || password.length < 6) {
+        return res.status(400).json({ error: "Password minimal terdiri dari 6 karakter." });
+      }
+      const passwordHash = await bcrypt.hash(password, 10);
+      const { rows } = await query(
+        "UPDATE admins SET email = $1, password_hash = $2, updated_at = NOW() WHERE id = $3 RETURNING id, email",
+        [normalizedEmail, passwordHash, adminId]
+      );
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Akun admin tidak ditemukan." });
+      }
+      return res.json({
+        success: true,
+        message: "Email dan password berhasil diperbarui. Silakan login kembali.",
+        user: { id: rows[0].id, email: rows[0].email },
+      });
+    } else {
+      const { rows } = await query(
+        "UPDATE admins SET email = $1, updated_at = NOW() WHERE id = $2 RETURNING id, email",
+        [normalizedEmail, adminId]
+      );
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Akun admin tidak ditemukan." });
+      }
+      return res.json({
+        success: true,
+        message: "Email berhasil diperbarui. Silakan login kembali.",
+        user: { id: rows[0].id, email: rows[0].email },
+      });
+    }
+  } catch (err) {
+    console.error("Update account error:", err);
+    return res.status(500).json({ error: err.message || "Gagal memperbarui akun." });
+  }
+}

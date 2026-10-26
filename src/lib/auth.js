@@ -92,3 +92,25 @@ export function onAuthStateChange(callback) {
   listeners.add(callback);
   return () => listeners.delete(callback);
 }
+
+export async function updateAccount({ email, password }) {
+  const token = getStoredToken();
+  if (!token) throw new Error("Sesi login tidak valid. Silakan login ulang.");
+
+  const res = await fetch("/api/auth/account", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || "Gagal memperbarui akun.");
+  }
+
+  return data;
+}
+

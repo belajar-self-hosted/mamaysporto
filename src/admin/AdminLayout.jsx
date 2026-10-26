@@ -10,6 +10,7 @@ import ProjectsPanel from "./panels/ProjectsPanel";
 import TagsPanel from "./panels/TagsPanel";
 import ExperiencePanel from "./panels/ExperiencePanel";
 import SiteSettingsPanel from "./panels/SiteSettingsPanel";
+import AccountPanel from "./panels/AccountPanel";
 
 const TABS = [
   { key: "hero", label: "Hero", Component: HeroPanel },
@@ -19,6 +20,7 @@ const TABS = [
   { key: "tags", label: "Tags", Component: TagsPanel },
   { key: "experience", label: "Experience", Component: ExperiencePanel },
   { key: "settings", label: "Site Settings", Component: SiteSettingsPanel },
+  { key: "account", label: "Akun & Keamanan", Component: AccountPanel },
 ];
 
 export default function AdminLayout() {

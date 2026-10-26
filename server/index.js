@@ -3,7 +3,7 @@ import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { pool } from "./db.js";
-import { handleLogin, handleMe, handleLogout, requireAuth } from "./auth.js";
+import { handleLogin, handleMe, handleLogout, handleUpdateAccount, requireAuth } from "./auth.js";
 import dataRouter from "./routes/data.js";
 import uploadRouter from "./routes/upload.js";
 
@@ -45,6 +45,7 @@ app.get("/api/health", async (_req, res) => {
 app.post("/api/auth/login", handleLogin);
 app.get("/api/auth/me", requireAuth, handleMe);
 app.post("/api/auth/logout", handleLogout);
+app.put("/api/auth/account", requireAuth, handleUpdateAccount);
 
 // Data & Upload Routes
 app.use("/api/data", dataRouter);

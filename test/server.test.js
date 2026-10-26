@@ -13,7 +13,17 @@ server.listen(3099, async () => {
     console.log("Healthcheck response:", json);
     assert(json.status === "ok" || json.status === "degraded");
     assert(typeof json.uptime === "number");
-    console.log("Server healthcheck test passed!");
+
+    // Test PUT /api/auth/account requires authentication
+    const unauthRes = await fetch("http://localhost:3099/api/auth/account", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "test@example.com" }),
+    });
+    assert.equal(unauthRes.status, 401, "Expected 401 Unauthorized without Bearer token");
+    console.log("PUT /api/auth/account auth protection test passed!");
+
+    console.log("All server tests passed!");
     server.close();
     process.exit(0);
   } catch (err) {
