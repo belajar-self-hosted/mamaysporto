@@ -8,7 +8,7 @@ import { revealText } from "../lib/textReveal";
 import "./Projects.css";
 
 const CATEGORY_TABS = [
-  { value: "all", label: "Semua" },
+  { value: "all", label: "All" },
   { value: "live", label: "Live" },
   { value: "localhost", label: "Localhost" },
 ];
@@ -51,10 +51,10 @@ export default function Projects() {
       <h2 class="section-title" use:revealText>PROJECTS</h2>
       
       {/* Menampilkan teks loading jika data sedang diambil */}
-      <Show when={!projectsData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Memuat projek dari server...</p>}>
+      <Show when={!projectsData.loading} fallback={<p style={{ "text-align": "center", "margin-top": "2rem" }}>Loading projects from server...</p>}>
         
         {/* Menampilkan error jika ada masalah koneksi/permission */}
-        <Show when={!projectsData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Gagal memuat projek: Pastikan izin Public 'Read' sudah aktif di Directus.</p>}>
+        <Show when={!projectsData.error} fallback={<p style={{ color: "red", "text-align": "center", "margin-top": "2rem" }}>Failed to load projects: Please check server connection.</p>}>
 
           <div class="projects-tabs">
             <For each={CATEGORY_TABS}>
@@ -73,7 +73,7 @@ export default function Projects() {
 
           <Show
             when={sortedAndFilteredProjects().length > 0}
-            fallback={<p class="projects-empty">Belum ada project di kategori ini.</p>}
+            fallback={<p class="projects-empty">No projects found in this category.</p>}
           >
             <div class="projects-grid" use:reveal={{ threshold: 0.02 }}>
               {/* Menggunakan <For> dari SolidJS untuk melakukan iterasi data reaktif */}
