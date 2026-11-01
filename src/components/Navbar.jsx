@@ -34,9 +34,9 @@ export default function Navbar() {
           aria-expanded={isOpen()}
           onClick={toggleMenu}
         >
-          <span class="hamburger-line" classList={{ 'open': isOpen() }}></span>
-          <span class="hamburger-line" classList={{ 'open': isOpen() }}></span>
-          <span class="hamburger-line" classList={{ 'open': isOpen() }}></span>
+          <span class="hamburger-line" classList={{ 'open': isOpen() }} />
+          <span class="hamburger-line" classList={{ 'open': isOpen() }} />
+          <span class="hamburger-line" classList={{ 'open': isOpen() }} />
         </button>
 
         <ul class={`nav-links ${isOpen() ? "open" : ""}`}>

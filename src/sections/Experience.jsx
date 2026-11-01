@@ -20,7 +20,7 @@ export default function Experience() {
               {(exp, index) => (
                 <div class="timeline-item neo-box">
                   {/* Gunakan fungsi SolidJS (index()) untuk angka indeks loop */}
-                  <div class="timeline-dot" style={{ "background-color": index() % 2 === 0 ? "var(--accent-1)" : "var(--accent-2)" }}></div>
+                  <div class="timeline-dot" style={{ "background-color": index() % 2 === 0 ? "var(--accent-1)" : "var(--accent-2)" }} />
                   <div class="timeline-content">
                     <h3 class="exp-role">{exp.role}</h3>
                     <div class="exp-meta">

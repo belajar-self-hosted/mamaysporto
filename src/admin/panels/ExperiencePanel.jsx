@@ -62,11 +62,11 @@ function ExperienceForm(props) {
         <button type="submit" class="neo-btn btn-primary" disabled={busy()}>
           {props.submitLabel || "Simpan"}
         </button>
-        <button type="button" class="neo-btn btn-default" disabled={busy()} onClick={props.onCancel}>
+        <button type="button" class="neo-btn btn-default" disabled={busy()} onClick={() => props.onCancel()}>
           Batal
         </button>
         <Show when={props.onDelete}>
-          <button type="button" class="neo-btn btn-accent" disabled={busy()} onClick={props.onDelete}>Hapus</button>
+          <button type="button" class="neo-btn btn-accent" disabled={busy()} onClick={() => props.onDelete()}>Hapus</button>
         </Show>
       </div>
     </form>
@@ -110,6 +110,20 @@ export default function ExperiencePanel() {
     }
   };
 
+  const handleCreate = async (data) => {
+    await insertRow("experience", data);
+    setOpenId(null);
+    notifySuccess("Experience berhasil ditambahkan.");
+    refetch();
+  };
+
+  const handleUpdate = async (id, data) => {
+    await updateRow("experience", id, data);
+    setOpenId(null);
+    notifySuccess("Experience berhasil disimpan.");
+    refetch();
+  };
+
   return (
     <div class="admin-panel">
       <h2>Experience</h2>
@@ -124,12 +138,7 @@ export default function ExperiencePanel() {
           <ExperienceForm
             submitLabel="Tambah"
             onCancel={() => setOpenId(null)}
-            onSubmit={async (data) => {
-              await insertRow("experience", data);
-              setOpenId(null);
-              notifySuccess("Experience berhasil ditambahkan.");
-              refetch();
-            }}
+            onSubmit={handleCreate}
           />
         </div>
       </Show>
@@ -158,12 +167,7 @@ export default function ExperiencePanel() {
                     initial={item}
                     submitLabel="Simpan"
                     onCancel={() => setOpenId(null)}
-                    onSubmit={async (data) => {
-                      await updateRow("experience", item.id, data);
-                      setOpenId(null);
-                      notifySuccess("Experience berhasil disimpan.");
-                      refetch();
-                    }}
+                    onSubmit={(data) => handleUpdate(item.id, data)}
                     onDelete={() => handleDelete(item)}
                   />
                 </Show>

@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+[role="button"]:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #006a60;
+  outline-offset: 3px;
+}
+
 @theme {
   --font-anton: 'Anton', sans-serif;
   --font-space: 'Space Grotesk', sans-serif;

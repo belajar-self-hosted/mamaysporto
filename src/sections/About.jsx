@@ -1,5 +1,6 @@
 import { createResource, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
+import { sanitizeAboutHtml } from "../lib/sanitizeHtml";
 import { reveal } from "../lib/scrollReveal";
 import { revealText } from "../lib/textReveal";
 import "./About.css";
@@ -19,11 +20,11 @@ export default function About() {
           <Show when={!aboutData.error} fallback={<p style={{ color: "red", "text-align": "center" }}>Gagal memuat profil: Pastikan izin Public 'Read' aktif.</p>}>
             <div class="about-content">
               <Show when={aboutData().image}>
-                <img class="about-figure neo-collage-mask" src={aboutData().image} alt="" />
+                <img class="about-figure neo-collage-mask" src={aboutData().image} alt="" loading="lazy" decoding="async" />
               </Show>
 
-              {/* innerHTML digunakan agar format tulisan tebal (bold) atau link (a href) dari WYSIWYG Directus bisa tampil sempurna */}
-              <div class="about-text" innerHTML={aboutData().content}></div>
+              {/* eslint-disable-next-line solid/no-innerhtml -- output is built from a strict tag/attribute allowlist */}
+              <div class="about-text" innerHTML={sanitizeAboutHtml(aboutData().content)} />
 
               <div class="about-stats">
                 <div class="stat-box neo-box">

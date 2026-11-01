@@ -11,6 +11,9 @@ concurrency:
   group: production-deploy-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   deploy:
     name: Build & In-Place Deploy on LXC 10018
@@ -24,6 +27,19 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Validate before deployment
+        run: |
+          npm ci --ignore-scripts
+          npm audit --omit=dev
+          npm run lint
+          npm test
+
       - name: Sync Source Code to Production Directory
         run: |
           echo ">>> Mensinkronkan file repository ke direktori produksi $APP_DIR..."
@@ -31,13 +47,19 @@ jobs:
             --exclude='.env' \
             --exclude='.git' \
             --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            --exclude='dist-ssr' \
+            --exclude='uploads' \
             ./ "$APP_DIR/"
 
       - name: Build & Launch Docker Container In-Place
         working-directory: /opt/mamaysporto
         run: |
           echo ">>> Menjalankan build Docker image lokal (Zero-GHCR)..."
-          docker compose build --pull
+          docker compose build --pull app
+          echo ">>> Menjalankan provisioning database dan migrasi..."
+          docker compose run --rm migrator
           docker compose up -d --remove-orphans
 
       - name: Application Health Check

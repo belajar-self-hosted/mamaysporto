@@ -38,6 +38,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <img
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBskh_2IyNveQlI-xq4hiLlXrv0UQcSkjt7qXz10w4mYcWWVXw2XYcNo0xnvL3vyLQRTA1mprNAk4vk8c_oVsCK_BnmvL_1f8UCM0HivsAOhqOR06fsXar-GTjYlEQi9oZlLkEEa60W3lLX7KZJYH8nE4fq88XMRvv-5PlII42kPuYQs4ECsy4rrVXIN6f657NYZETlOIpiDaP1-iwl2UjaxzwNORiTmwSjQQwk747jSChmg2jTAH5Y0JfoPdH2MBj5Bg"
             alt="Surreal collage illustration featuring giant red rabbit reading book on vintage cityscape with green dinosaur playing guitar."
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover opacity-85 mix-blend-multiply scale-105 transition-transform duration-1000 hover:scale-100"
           />
         </div>
@@ -118,9 +121,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Card 1: Monster Ego */}
           <article
             id="card-monster-ego"
+            role="button"
+            tabIndex={0}
+            aria-label="Inspect Monster Ego artwork"
             onClick={() => {
               soundFx.playClick();
               onSelectArtwork(ARTWORKS[0]);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                soundFx.playClick();
+                onSelectArtwork(ARTWORKS[0]);
+              }
             }}
             className="group relative aspect-[4/5] brutalist-border bg-[#8cf5e4] brutalist-shadow overflow-hidden translate-y-2 hover:translate-y-0 transition-all duration-300 cursor-pointer"
           >
@@ -151,9 +164,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Card 2: Narima */}
           <article
             id="card-narima"
+            role="button"
+            tabIndex={0}
+            aria-label="Inspect Narima artwork"
             onClick={() => {
               soundFx.playClick();
               onSelectArtwork(ARTWORKS[1]);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                soundFx.playClick();
+                onSelectArtwork(ARTWORKS[1]);
+              }
             }}
             className="group relative aspect-[4/5] brutalist-border bg-[#a96428] brutalist-shadow overflow-hidden md:-translate-y-6 hover:-translate-y-9 transition-all duration-300 cursor-pointer"
           >
@@ -184,9 +207,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Card 3: Lowongan Pekerjaan */}
           <article
             id="card-lowongan"
+            role="button"
+            tabIndex={0}
+            aria-label="Inspect Lowongan Pekerjaan artwork"
             onClick={() => {
               soundFx.playClick();
               onSelectArtwork(ARTWORKS[2]);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                soundFx.playClick();
+                onSelectArtwork(ARTWORKS[2]);
+              }
             }}
             className="group relative aspect-[4/5] brutalist-border bg-[#db313f] brutalist-shadow overflow-hidden md:translate-y-6 hover:translate-y-3 transition-all duration-300 cursor-pointer md:col-span-2 lg:col-span-1"
           >
@@ -245,6 +278,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     ? 'bg-[#b7102a] text-white shadow-[2px_2px_0px_0px_#1d1b15] font-bold'
                     : 'bg-[#fff9ed] text-[#1d1b15] hover:bg-[#8cf5e4]'
                 }`}
+                aria-pressed={selectedCategory === cat}
               >
                 {cat}
               </button>
@@ -257,9 +291,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {filteredArtworks.map((art) => (
             <div
               key={art.id}
+              role="button"
+              tabIndex={0}
+              aria-label={`Inspect ${art.title} artwork`}
               onClick={() => {
                 soundFx.playClick();
                 onSelectArtwork(art);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  soundFx.playClick();
+                  onSelectArtwork(art);
+                }
               }}
               className="group bg-[#fff9ed] border-4 border-[#1d1b15] brutalist-shadow hover:shadow-[12px_12px_0px_0px_#1d1b15] hover:-translate-y-2 transition-all duration-200 cursor-pointer flex flex-col"
             >
@@ -268,6 +312,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <img
                   src={art.image}
                   alt={art.alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <span className="absolute top-2 left-2 bg-[#1d1b15] text-[#fff9ed] font-label-caps text-[10px] px-2 py-0.5 border border-[#fff9ed]">

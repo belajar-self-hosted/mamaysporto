@@ -1,112 +1,78 @@
-# SolidJS Neobrutalism Portfolio
+# mamaysporto
 
-Sebuah project portofolio interaktif dan modern yang dibangun dengan **SolidJS** dan desain **Neobrutalism**. Dilengkapi dengan AI Chat Assistant yang didukung oleh Google Gemini via OpenRouter, serta CMS berbasis Supabase untuk manajemen konten yang dinamis.
+Personal portfolio website built with SolidJS, Vite, Express, and PostgreSQL. The root application is deployed with Docker Compose to the self-hosted Proxmox LXC described in the deployment spec and GitHub Actions workflow. The legacy Vercel/Supabase setup is not used by the root application.
 
-## Teknologi yang Digunakan
+## Stack
 
-### Frontend
-- **Framework:** [SolidJS](https://www.solidjs.com/)
-- **Build Tool:** [Vite](https://vitejs.dev/)
-- **Desain Sistem:** Neobrutalism (Custom CSS)
+- SolidJS and Vite frontend (`src/`)
+- Express 5 API (`server/`)
+- PostgreSQL 16 (`database/`)
+- Docker Compose deployment (`compose.yaml`)
+- Local media volume served from `/uploads`
+- Separate React/TypeScript prototype in `sumur-creative/`; it is not part of the root build or deployment
 
-### Backend (Serverless)
-- **Runtime:** [Vercel Serverless Functions](https://vercel.com/docs/functions)
-- **AI:** [OpenRouter](https://openrouter.ai/) (Google Gemini 2.5 Flash Lite) via [Vercel AI SDK](https://sdk.vercel.ai)
+The AI chat prototype is not part of the active application. SQL under `supabase/` is retained as legacy material and is not used by the Express runtime. Its write policies now fail closed when those scripts are run; this does not change policies on an already provisioned Supabase project.
 
-### Database / CMS
-- **Database:** [Supabase](https://supabase.com/) (PostgreSQL) — menyimpan data portfolio (hero, about, skills, projects, experience)
+## Requirements
 
----
+- Node.js 22.13+ or 24+ for local development and verification
+- Docker Engine with Docker Compose v2 for the full local stack
 
-## Cara Menjalankan Project (Lokal)
+## First-time setup
 
-1. **Clone repository:**
-   ```bash
-   git clone <URL_REPO_ANDA>
-   cd mamaysporto
-   ```
+1. Copy `.env.example` to `.env` and generate three independent random secrets. Use hex values so they can safely appear in the PostgreSQL connection URL:
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Buat file `.env` dari `.env.example`:**
-   ```bash
+   ```sh
    cp .env.example .env
+   openssl rand -hex 32 # POSTGRES_PASSWORD
+   openssl rand -hex 32 # APP_DB_PASSWORD
+   openssl rand -hex 32 # JWT_SECRET
    ```
-   Isi variabel-variabel di dalamnya (lihat bagian Environment Variables).
 
-4. **Jalankan server development:**
-   ```bash
-   npm run dev
+   Put each generated value into the matching variable in `.env`. Keep `.env` private and out of version control. `POSTGRES_USER` is the database bootstrap role; the application connects as the separate, limited `APP_DB_USER`.
+
+2. Build the app image, initialize the database, apply pending migrations, and start the site:
+
+   ```sh
+   docker compose build app
+   docker compose run --rm migrator
+   docker compose up -d
    ```
-   Aplikasi berjalan di `http://localhost:3333`.
 
----
+   The PostgreSQL initialization scripts create the schema and public portfolio content on an empty data volume. The migrator then provisions the runtime DB role, grants the application's required table permissions, and applies numbered SQL files in `database/migrations/`. The initialization scripts run only when the PostgreSQL data volume is first created.
 
-## Deploy ke Vercel
+3. Create the first admin account interactively inside the running app container. The password prompt does not echo the password, and an existing email is never overwritten:
 
-1. **Push repository ke GitHub/GitLab/Bitbucket.**
-2. **Import project di [Vercel Dashboard](https://vercel.com/dashboard).**
-3. **Set Environment Variables di Vercel:**
-   - `OPENROUTER_API_KEY` — API key dari OpenRouter
-   - `VITE_SUPABASE_URL` — URL project Supabase
-   - `VITE_SUPABASE_ANON_KEY` — Anon key Supabase
-4. **Deploy.** Vercel akan otomatis build dan deploy setiap push ke branch utama.
+   ```sh
+   docker compose exec app node scripts/create-admin.js
+   ```
 
----
+4. Open `http://localhost:3000` and check `http://localhost:3000/api/health`. The admin panel is available at `/#/admin`.
 
-## Environment Variables
+On an existing deployment, add `APP_DB_USER`, `APP_DB_PASSWORD`, and a strong `JWT_SECRET` to its private `.env` before deploying. Keep `POSTGRES_USER` and `POSTGRES_PASSWORD` aligned with the credentials already stored in the existing PostgreSQL volume; changing those environment values alone does not rotate a database role password. Run the migrator before starting/recreating the app. The migration step creates the limited runtime role, so the first application start will fail until it succeeds. Review existing admin accounts and rotate any credentials that came from an older seed; changing this repository does not alter existing PostgreSQL volumes or admin passwords.
 
-| Variable | Keterangan | Lokasi |
-|---|---|---|
-| `OPENROUTER_API_KEY` | API key untuk AI Chat (server-side only) | Vercel Dashboard |
-| `VITE_SUPABASE_URL` | URL project Supabase | Vercel Dashboard |
-| `VITE_SUPABASE_ANON_KEY` | Anon key Supabase | Vercel Dashboard |
+## Local frontend/API development
 
----
+Install the root dependencies and configure the host-side `DATABASE_URL` in `.env` to use the Compose runtime role at `localhost:5432`:
 
-## Setup Supabase
+```sh
+npm ci
+docker compose build app
+docker compose up -d postgres
+docker compose run --rm migrator
+npm run dev
+```
 
-1. Buat project baru di [Supabase](https://supabase.com).
-2. Jalankan SQL script di `supabase/schema.sql` melalui **Supabase Dashboard > SQL Editor**.
-3. Jalankan `supabase/cms_admin_setup.sql` (setelah schema.sql) untuk menambahkan kolom Hero/CTA tambahan, tabel `site_settings`, policy tulis khusus admin, dan storage bucket `project-images`.
-3b. Jalankan `supabase/hero_image_upload.sql` (setelah cms_admin_setup.sql) untuk menambahkan kolom `image` di Hero dan storage bucket `site-images` (foto profil Hero yang bisa diupload lewat admin panel).
-3c. Jalankan `supabase/site_meta_title_favicon.sql` (setelah hero_image_upload.sql) untuk menambahkan kolom `site_title` dan `favicon_url` di `site_settings` (judul tab browser & favicon).
-3d. Jalankan `supabase/social_links_dynamic.sql` (setelah site_meta_title_favicon.sql) untuk mengganti field social link tetap dengan kolom `social_links` (jsonb, list dinamis).
-4. Buat 1 akun admin lewat **Supabase Dashboard > Authentication > Users > Add User** (email + password). Akun ini dipakai untuk login ke CMS. Jangan aktifkan public sign-up.
-5. Isi/edit data portfolio (hero, about, skills, projects, experience, site settings, AI prompt) lewat **CMS Admin Panel** di aplikasi (lihat di bawah), bukan lewat Table Editor.
+The PostgreSQL port is bound to loopback only. If local port 5432 is already in use, change `POSTGRES_PORT` in `.env` and update the host-side `DATABASE_URL` to match. `npm start` also loads `.env` when present. `npm test`, `npm run lint`, and `npm run build` are the project verification commands.
 
----
+## Deployment and operations
 
-## CMS Admin Panel
+The checked-in workflow builds and deploys on the configured self-hosted runner in LXC 10018. Keep `.env` on the LXC outside the synchronized source tree. The Traefik profile currently forwards HTTP from ingress LXC 10080 (`192.168.0.80`) to the app LXC (`192.168.0.18:3000`). Restrict port 3000 at the LXC/Proxmox firewall so only the ingress gateway can reach it. The final internal hop is still HTTP; use it only on a trusted, isolated LAN or add TLS/mTLS on that hop.
 
-Semua konten website (Hero, About, Skills, Projects, Experience, Navbar/Footer, Contact, hingga system prompt AI chat "Yowman") dikelola lewat halaman admin bawaan, tanpa perlu redeploy.
+`TRUSTED_PROXY_IPS` is set to the documented gateway address for Express client-IP and rate-limit handling. Keep this list to exact trusted proxy addresses; do not add public or untrusted subnets. Verify the gateway address and forwarded-header behavior after network changes.
 
-- **URL:** `/#/admin` (mis. `http://localhost:3333/#/admin` atau `https://domain-kamu.com/#/admin`)
-- **Login:** gunakan akun yang dibuat di langkah Setup Supabase #4 (Supabase Auth, email + password).
-- **Fitur per tab:**
-  - **Hero** — foto profil (upload ke Supabase Storage, maks 1 MB, tampil dengan rasio asli gambar), sapaan, nama, judul role, subtitle, label & link tombol CTA
-  - **About** — konten (boleh HTML sederhana seperti `<strong>`) + 3 statistik
-  - **Skills** — tambah/edit/hapus skill
-  - **Projects** — tambah/edit/hapus project, upload gambar langsung ke Supabase Storage (maks 1 MB) atau paste URL, kelola tags/link
-  - **Experience** — tambah/edit/hapus riwayat pengalaman
-  - **Site Settings** — judul tab browser & favicon, brand navbar & nama footer, **social media links (bebas tambah/hapus, ikon otomatis menyesuaikan platform dari URL yang dimasukkan — GitHub, LinkedIn, Instagram, X/Twitter, Facebook, YouTube, TikTok, WhatsApp, Telegram, Email, dll)**, judul/deskripsi Contact, link WhatsApp "Report", serta system prompt AI chatbot Yowman
-- Perubahan tersimpan langsung ke Supabase dan otomatis tampil di halaman publik setelah reload (tanpa perlu deploy ulang).
+Back up both the PostgreSQL data volume and the uploads volume. Compose limits each container's log files; CPU and memory limits have not been set because no representative LXC workload measurements are checked in. Measure peak memory/CPU before choosing limits.
 
----
+## Nested prototype
 
-## Struktur Folder
-
-- `/src/` — Source code SolidJS
-  - `/src/sections/` — Komponen halaman publik (Hero, About, Skills, Projects, Experience, Contact)
-  - `/src/admin/` — CMS Admin Panel (`/#/admin`): login, layout, dan panel per section
-  - `/src/lib/` — Helper functions (API read/write, Supabase client, auth)
-- `/api/` — Vercel Serverless Functions (AI Chat endpoint)
-- `/supabase/` — SQL schema & migration untuk Supabase
-- `/public/` — Static assets
-
----
-
-*Dibangun dengan SolidJS + Vercel + Supabase.*
+`sumur-creative/` is an archived, independent Vite prototype. The deployment workflow synchronizes it to the host source directory with `rsync`, but the root Docker image does not include it and CI does not build or test it. Its dependency manifest is maintained separately and does not yet have a lockfile, so it is not a reproducible or supported build target. Its dev script binds to localhost by default; do not expose it on an untrusted network.

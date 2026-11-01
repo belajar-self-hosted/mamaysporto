@@ -126,6 +126,8 @@ export const AboutView: React.FC<AboutViewProps> = ({
               <img
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-XDXcMe1YjUFTWYZQJnXD6kWCH5uzuLM30JQXv5Uj8mP0AGOXq0uxWNqL9xcEd3MGTawAZLqtvNALCNa1-_mnIoPIVpDdyo79_zWqMfyJID6WLoDp7hwg8gRWDSK2bJRGlex2ic7-FU-TyaMjeZ3DtRkMdVQwO1zR7MT0d4ccb8BsGpi8HpHTDGWK-5OwY2i1xP-2o7gdpT214DdGvqBSKd6CEksjV6YLvmtHTjG-6gEi4IukkHTn"
                 alt="Surreal collage featuring a vintage television with a realistic human eyeball and botanical growth on aged parchment."
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-500"
               />
               <div className="absolute bottom-3 left-3 bg-[#b7102a] text-white px-3 py-1 font-label-caps text-[10px] border border-white">
@@ -162,9 +164,19 @@ export const AboutView: React.FC<AboutViewProps> = ({
             {/* 1. Ego Centris (md:col-span-5 md:row-span-2) */}
             <article
               id="team-ego-centris"
+              role="button"
+              tabIndex={0}
+              aria-label={`Inspect ${TEAM_MEMBERS[0].name} profile`}
               onClick={() => {
                 soundFx.playClick();
                 onSelectMember(TEAM_MEMBERS[0]);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  soundFx.playClick();
+                  onSelectMember(TEAM_MEMBERS[0]);
+                }
               }}
               className="md:col-span-5 md:row-span-2 bg-[#fff9ed] border-4 border-[#1d1b15] brutalist-shadow p-6 flex flex-col justify-between group hover:shadow-[12px_12px_0px_0px_#1d1b15] hover:-translate-y-1 transition-all duration-200 cursor-pointer overflow-hidden relative"
             >
@@ -181,6 +193,8 @@ export const AboutView: React.FC<AboutViewProps> = ({
                 <img
                   src={TEAM_MEMBERS[0].image}
                   alt={TEAM_MEMBERS[0].alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
@@ -201,9 +215,19 @@ export const AboutView: React.FC<AboutViewProps> = ({
             {/* 2. Narima (md:col-span-7 md:row-span-1) */}
             <article
               id="team-narima"
+              role="button"
+              tabIndex={0}
+              aria-label={`Inspect ${TEAM_MEMBERS[1].name} profile`}
               onClick={() => {
                 soundFx.playClick();
                 onSelectMember(TEAM_MEMBERS[1]);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  soundFx.playClick();
+                  onSelectMember(TEAM_MEMBERS[1]);
+                }
               }}
               className="md:col-span-7 md:row-span-1 bg-[#006a60] text-white border-4 border-[#1d1b15] brutalist-shadow p-6 flex flex-col sm:flex-row items-center justify-between group hover:shadow-[12px_12px_0px_0px_#1d1b15] hover:-translate-y-1 transition-all duration-200 cursor-pointer overflow-hidden gap-6"
             >
@@ -228,6 +252,8 @@ export const AboutView: React.FC<AboutViewProps> = ({
                 <img
                   src={TEAM_MEMBERS[1].image}
                   alt={TEAM_MEMBERS[1].alt}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
@@ -236,9 +262,19 @@ export const AboutView: React.FC<AboutViewProps> = ({
             {/* 3. Karjawan (md:col-span-3 md:row-span-1) */}
             <article
               id="team-karjawan"
+              role="button"
+              tabIndex={0}
+              aria-label={`Inspect ${TEAM_MEMBERS[2].name} profile`}
               onClick={() => {
                 soundFx.playClick();
                 onSelectMember(TEAM_MEMBERS[2]);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  soundFx.playClick();
+                  onSelectMember(TEAM_MEMBERS[2]);
+                }
               }}
               className="md:col-span-3 md:row-span-1 bg-[#a96428] text-white border-4 border-[#1d1b15] brutalist-shadow p-5 flex flex-col justify-between group hover:shadow-[12px_12px_0px_0px_#1d1b15] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
             >
@@ -266,9 +302,19 @@ export const AboutView: React.FC<AboutViewProps> = ({
             {/* 4. Migrasee (md:col-span-4 md:row-span-1) */}
             <article
               id="team-migrasee"
+              role="button"
+              tabIndex={0}
+              aria-label={`Inspect ${TEAM_MEMBERS[3].name} profile`}
               onClick={() => {
                 soundFx.playClick();
                 onSelectMember(TEAM_MEMBERS[3]);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  soundFx.playClick();
+                  onSelectMember(TEAM_MEMBERS[3]);
+                }
               }}
               className="md:col-span-4 md:row-span-1 bg-[#b7102a] text-white border-4 border-[#1d1b15] brutalist-shadow p-5 flex flex-col justify-between group hover:shadow-[12px_12px_0px_0px_#1d1b15] hover:-translate-y-1 transition-all duration-200 cursor-pointer"
             >

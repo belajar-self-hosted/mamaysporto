@@ -75,15 +75,7 @@ export async function getSession() {
     const data = await res.json();
     return { token, user: data.user };
   } catch {
-    // If backend cannot be reached, fallback to stored user if any
-    const storedUser = localStorage.getItem(USER_KEY);
-    if (storedUser) {
-      try {
-        return { token, user: JSON.parse(storedUser) };
-      } catch {
-        return null;
-      }
-    }
+    // Never show an unverified local user as an authenticated admin.
     return null;
   }
 }

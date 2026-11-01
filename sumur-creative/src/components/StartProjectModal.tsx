@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ProjectBrief } from '../types';
 import { soundFx } from '../utils/audio';
 import { X, Sparkles, Check, Send, AlertTriangle } from 'lucide-react';
+import { useAccessibleDialog } from '../utils/useAccessibleDialog';
 
 interface StartProjectModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const dialogRef = useAccessibleDialog(isOpen, onClose);
   const [formData, setFormData] = useState<ProjectBrief>({
     name: '',
     email: '',
@@ -59,11 +61,18 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
     >
       <div
         id="start-project-modal-content"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="start-project-modal-title"
+        tabIndex={-1}
         className="relative w-full max-w-2xl bg-[#fff9ed] border-4 border-[#1d1b15] brutalist-shadow-xl p-6 sm:p-8 md:p-10 my-auto text-[#1d1b15]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
+          type="button"
+          aria-label="Close project request"
           onClick={() => {
             soundFx.playClick();
             onClose();
@@ -79,7 +88,7 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
               <Check className="w-10 h-10 text-[#006a60]" />
             </div>
 
-            <h2 className="font-display-lg text-4xl sm:text-5xl text-[#1d1b15] uppercase tracking-tight">
+            <h2 id="start-project-modal-title" className="font-display-lg text-4xl sm:text-5xl text-[#1d1b15] uppercase tracking-tight">
               TRANSMISSION RECEIVED
             </h2>
 
@@ -109,7 +118,7 @@ export const StartProjectModal: React.FC<StartProjectModalProps> = ({
               </span>
             </div>
 
-            <h2 className="font-display-xl text-3xl sm:text-4xl md:text-5xl text-[#1d1b15] uppercase tracking-tight leading-none mb-1">
+            <h2 id="start-project-modal-title" className="font-display-xl text-3xl sm:text-4xl md:text-5xl text-[#1d1b15] uppercase tracking-tight leading-none mb-1">
               INITIATE SEQUENCE
             </h2>
             <p className="font-body-md text-xs sm:text-sm text-[#5b403f] mb-6">

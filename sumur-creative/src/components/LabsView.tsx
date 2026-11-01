@@ -66,6 +66,8 @@ export const LabsView: React.FC = () => {
                 <img
                   src={currentArt.image}
                   alt={currentArt.alt}
+                  loading="lazy"
+                  decoding="async"
                   className={`w-full h-full object-cover transition-all duration-500 ${
                     halftoneMode ? 'contrast-125 saturate-150' : 'grayscale'
                   }`}

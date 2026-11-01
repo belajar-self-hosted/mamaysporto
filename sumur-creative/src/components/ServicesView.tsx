@@ -130,6 +130,8 @@ export const ServicesView: React.FC<ServicesViewProps> = ({
                       <img
                         src={service.image}
                         alt={service.imageAlt}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-[#b7102a]/10 pointer-events-none group-hover:opacity-0 transition-opacity" />

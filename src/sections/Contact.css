@@ -41,6 +41,12 @@
   font-size: 1.1rem;
 }
 
+.contact-handoff-note {
+  margin-top: -1.25rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
 .contact-form {
   display: flex;
   flex-direction: column;

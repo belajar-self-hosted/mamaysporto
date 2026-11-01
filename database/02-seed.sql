@@ -2,10 +2,8 @@
 -- Seed Initial Data for mamaysporto
 -- =============================================
 
--- 1. Default Admin Account (Email: admin@mamay.my.id, Password: admin123)
-INSERT INTO admins (id, email, password_hash)
-VALUES (1, 'admin@mamay.my.id', '$2b$10$/fAgnWDFB11lhpuPBbJ75Oq6q8VIQSYBwXZvH/oY3GxTUxvklO/P6')
-ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash;
+-- Admin accounts are created explicitly with `node scripts/create-admin.js`.
+-- Never seed a shared or known password into a deployed database.
 
 -- 2. Hero Singleton
 INSERT INTO hero (id, greeting, display_name, role_prefix, role_highlight, subtitle, cta_projects_label, cta_contact_label, cta_yowman_label, cta_yowman_link)

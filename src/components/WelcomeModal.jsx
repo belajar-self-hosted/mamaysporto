@@ -1,5 +1,6 @@
 import { createSignal, onMount, Show } from "solid-js";
 import Button from "./Button";
+import { accessibleDialog } from "../lib/modalA11y";
 
 export default function WelcomeModal() {
   const [show, setShow] = createSignal(false);
@@ -18,10 +19,10 @@ export default function WelcomeModal() {
   return (
     <Show when={show()}>
       <div class="modal-overlay">
-        <div class="modal-box neo-box">
+        <div class="modal-box neo-box" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" tabindex="-1" use:accessibleDialog={() => setShow(false)}>
           <div class="modal-header">
-            <span>Information</span>
-            <button class="modal-close" onClick={() => setShow(false)}>
+            <span id="welcome-modal-title">Information</span>
+            <button type="button" class="modal-close" aria-label="Close information" onClick={() => setShow(false)}>
               ×
             </button>
           </div>

@@ -50,6 +50,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           <div className="flex items-center gap-2 md:hidden">
             <button
               id="mobile-audio-toggle"
+              aria-label={audioActive ? 'Mute audio' : 'Enable audio'}
               onClick={handleToggleSound}
               className="p-2 border-2 border-[#1d1b15] bg-[#ede7dd] hover:bg-[#b7102a] hover:text-white transition-colors"
               title={audioActive ? 'Mute analog tactile audio' : 'Enable tactile audio'}
@@ -58,6 +59,9 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             </button>
             <button
               id="mobile-menu-toggle"
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-drawer"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 border-2 border-[#1d1b15] bg-[#b7102a] text-white shadow-[2px_2px_0px_0px_#1d1b15]"
             >
@@ -106,6 +110,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           {/* Audio toggle button */}
           <button
             id="desktop-audio-toggle"
+            aria-label={audioActive ? 'Mute audio' : 'Enable audio'}
             onClick={handleToggleSound}
             className="p-2 border-2 border-[#1d1b15] bg-[#ede7dd] hover:bg-[#b7102a] hover:text-white transition-colors shadow-[2px_2px_0px_0px_#1d1b15] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             title={audioActive ? 'Mute analog tactile audio' : 'Enable tactile audio'}

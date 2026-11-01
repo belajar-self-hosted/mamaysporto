@@ -24,7 +24,10 @@ export default function AboutPanel() {
 
   onCleanup(() => setDirty(false));
 
-  const update = (key) => (e) => setForm({ ...form(), [key]: e.target.value });
+  const update = (key) => (e) => {
+    const value = e.target.value;
+    setForm((current) => ({ ...current, [key]: value }));
+  };
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -74,7 +77,7 @@ export default function AboutPanel() {
           </div>
 
           <div class="admin-form-group">
-            <label>Konten (HTML diperbolehkan, mis. &lt;strong&gt;)</label>
+            <label>Konten (format aman: paragraf, tebal, miring, daftar, dan tautan HTTP/HTTPS)</label>
             <textarea class="neo-input" rows="6" value={form().content} onInput={update("content")} />
           </div>
 

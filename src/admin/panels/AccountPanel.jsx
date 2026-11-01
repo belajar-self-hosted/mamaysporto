@@ -32,8 +32,8 @@ export default function AccountPanel() {
     }
 
     if (password()) {
-      if (password().length < 6) {
-        notifyError("Password baru minimal terdiri dari 6 karakter.");
+      if (Array.from(password()).length < 14 || new TextEncoder().encode(password()).byteLength > 72) {
+        notifyError("Password baru minimal 14 karakter dan maksimal 72 byte UTF-8.");
         return;
       }
       if (password() !== confirmPassword()) {
@@ -95,7 +95,7 @@ export default function AccountPanel() {
               placeholder="Kosongkan jika hanya ingin ganti email"
               autocomplete="new-password"
             />
-            <span class="admin-hint">Minimal 6 karakter. Biarkan kosong jika tidak ingin mengubah password.</span>
+            <span class="admin-hint">Minimal 14 karakter, maksimal 72 byte UTF-8. Biarkan kosong jika tidak ingin mengubah password.</span>
           </div>
 
           <Show when={password().length > 0}>

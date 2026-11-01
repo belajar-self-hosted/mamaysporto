@@ -1,11 +1,27 @@
-/**
- * Pastikan URL punya scheme (https://, mailto:, tel:, dll) sebelum dipakai sebagai href.
- * Tanpa ini, input seperti "google.com" jadi link RELATIF ke halaman saat ini, bukan
- * link absolut ke situs eksternal.
- */
+const SAFE_SCHEMES = new Set(["http:", "https:", "mailto:", "tel:"]);
+
+/** Normalize a URL while rejecting active or unsupported schemes. */
 export function normalizeUrl(value) {
-  const trimmed = (value || "").trim();
+  if (typeof value !== "string") return "";
+
+  const trimmed = value.trim();
   if (!trimmed || trimmed === "#") return trimmed;
-  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith("//")) return trimmed;
-  return `https://${trimmed}`;
+  if (/[\u0000-\u001f\u007f]/.test(trimmed) || trimmed.includes("\\") || trimmed.startsWith("//")) return "";
+
+  if (trimmed.startsWith("/") || trimmed.startsWith("#") || trimmed.startsWith("?")) return trimmed;
+
+  const explicitScheme = trimmed.match(/^([a-z][a-z0-9+.-]*:)/i);
+  const candidate = explicitScheme ? trimmed : `https://${trimmed}`;
+
+  try {
+    const parsed = new URL(candidate);
+    if (!SAFE_SCHEMES.has(parsed.protocol)) return "";
+    if ((parsed.protocol === "http:" || parsed.protocol === "https:") && (!parsed.hostname || parsed.username || parsed.password)) {
+      return "";
+    }
+    if ((parsed.protocol === "mailto:" || parsed.protocol === "tel:") && !parsed.pathname) return "";
+    return parsed.href;
+  } catch {
+    return "";
+  }
 }

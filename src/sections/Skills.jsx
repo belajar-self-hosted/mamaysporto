@@ -35,7 +35,7 @@ export default function Skills() {
                   "color": accent.text
                 }}>
                   <Show when={skill.icon_url}>
-                    <img class="skill-icon" src={skill.icon_url} alt="" />
+                    <img class="skill-icon" src={skill.icon_url} alt="" loading="lazy" decoding="async" />
                   </Show>
                   {/* Karena di Directus kita akan membuat kolom bernama "name", kita panggil skill.name */}
                   {skill.name}

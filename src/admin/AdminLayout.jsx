@@ -1,4 +1,4 @@
-import { createSignal, onMount, onCleanup } from "solid-js";
+import { createSignal, onMount, onCleanup, For } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { signOut } from "../lib/auth";
 import { isDirty, setDirty, confirmDiscardIfDirty } from "./adminStore";
@@ -67,14 +67,14 @@ export default function AdminLayout() {
       <aside class="admin-sidebar">
         <div class="admin-sidebar-title">CMS Portfolio</div>
         <nav class="admin-nav">
-          {TABS.map((tab) => (
+          <For each={TABS}>{(tab) => (
             <button
               class={`admin-nav-item ${active() === tab.key ? "active" : ""}`}
               onClick={() => goTo(tab.key)}
             >
               {tab.label}
             </button>
-          ))}
+          )}</For>
         </nav>
         <a href="#/" class="admin-nav-item admin-view-site" onClick={handleViewSite}>Lihat Website ↗</a>
         <button class="neo-btn btn-default admin-logout" onClick={handleLogout}>Logout</button>

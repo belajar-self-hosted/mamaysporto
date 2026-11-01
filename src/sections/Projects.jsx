@@ -2,7 +2,6 @@ import { createResource, createSignal, For, Show } from "solid-js";
 import { fetchCollection } from "../lib/api";
 import { normalizeUrl } from "../lib/url";
 import Card from "../components/Card";
-import Button from "../components/Button";
 import { reveal } from "../lib/scrollReveal";
 import { revealText } from "../lib/textReveal";
 import "./Projects.css";
@@ -63,6 +62,7 @@ export default function Projects() {
                   type="button"
                   class="projects-tab"
                   classList={{ "is-active": activeCategory() === tab.value }}
+                  aria-pressed={activeCategory() === tab.value}
                   onClick={() => setActiveCategory(tab.value)}
                 >
                   {tab.label}
@@ -80,6 +80,8 @@ export default function Projects() {
               <For each={sortedAndFilteredProjects()}>
                 {(project, index) => {
                   const accent = getRandomAccent();
+                  const projectUrl = normalizeUrl(project.link);
+                  const githubUrl = normalizeUrl(project.github);
                   return (
                   <Card class="project-card">
                     <div class="project-image-wrapper">
@@ -112,16 +114,12 @@ export default function Projects() {
                       </div>
                       <div class="project-links">
                         {/* Tampilkan tombol Live Demo hanya jika link diisi */}
-                        <Show when={project.link && project.link !== "#" && project.link !== ""}>
-                          <a href={normalizeUrl(project.link)} target="_blank" rel="noopener noreferrer">
-                            <Button variant="live">Live Demo</Button>
-                          </a>
+                        <Show when={projectUrl && project.link !== "#"}>
+                          <a class="neo-btn btn-live" href={projectUrl} target="_blank" rel="noopener noreferrer">Live Demo</a>
                         </Show>
                         {/* Tampilkan tombol GitHub hanya jika github diisi */}
-                        <Show when={project.github && project.github !== "#" && project.github !== ""}>
-                          <a href={normalizeUrl(project.github)} target="_blank" rel="noopener noreferrer">
-                            <Button variant="default">GitHub</Button>
-                          </a>
+                        <Show when={githubUrl && project.github !== "#"}>
+                          <a class="neo-btn btn-default" href={githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
                         </Show>
                       </div>
                     </div>

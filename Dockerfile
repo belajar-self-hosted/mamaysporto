@@ -6,7 +6,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY index.html vite.config.js ./
 COPY public/ ./public/
@@ -27,9 +27,11 @@ ENV UPLOADS_DIR=/app/uploads
 ENV DIST_DIR=/app/dist
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --ignore-scripts
 
 COPY server/ ./server/
+COPY scripts/create-admin.js scripts/migrate.js ./scripts/
+COPY database/migrations/ ./database/migrations/
 COPY --from=builder /app/dist ./dist
 
 RUN mkdir -p uploads && chown -R node:node /app

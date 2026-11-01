@@ -2,6 +2,7 @@ import React from 'react';
 import { TeamMember } from '../types';
 import { soundFx } from '../utils/audio';
 import { X, Check, Wrench, Sparkles, Quote } from 'lucide-react';
+import { useAccessibleDialog } from '../utils/useAccessibleDialog';
 
 interface TeamModalProps {
   member: TeamMember | null;
@@ -14,6 +15,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
   onClose,
   onOpenStartProject,
 }) => {
+  const dialogRef = useAccessibleDialog(Boolean(member), onClose);
   if (!member) return null;
 
   return (
@@ -24,11 +26,18 @@ export const TeamModal: React.FC<TeamModalProps> = ({
     >
       <div
         id="team-modal-content"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="team-modal-title"
+        tabIndex={-1}
         className="relative w-full max-w-3xl bg-[#fff9ed] border-4 border-[#1d1b15] brutalist-shadow-xl p-6 sm:p-8 md:p-10 my-auto text-[#1d1b15]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
+          type="button"
+          aria-label="Close team member details"
           onClick={() => {
             soundFx.playClick();
             onClose();
@@ -45,6 +54,8 @@ export const TeamModal: React.FC<TeamModalProps> = ({
               <img
                 src={member.image}
                 alt={member.alt}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#b7102a] text-white font-label-caps text-xs px-2.5 py-1 border border-white font-bold">
@@ -59,7 +70,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({
               <span className="font-label-caps text-xs text-[#006a60] uppercase font-bold tracking-widest block">
                 {member.role}
               </span>
-              <h2 className="font-headline-lg text-4xl text-[#1d1b15] uppercase tracking-tight leading-none mt-1">
+                <h2 id="team-modal-title" className="font-headline-lg text-4xl text-[#1d1b15] uppercase tracking-tight leading-none mt-1">
                 {member.name}
               </h2>
             </div>

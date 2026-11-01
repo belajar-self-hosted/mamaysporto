@@ -1,23 +1,23 @@
 # Design Spec: Proxmox LXC 10018 Deployment & Traefik Ingress
 
 **Date:** 2026-10-24  
-**Status:** Approved  
+**Status:** Current deployment baseline (revised 2026-11-01)
 **Project:** mamaysporto (`profile.mamay.my.id`)  
 
 ---
 
 ## 1. Context & Objectives
 
-Aplikasi portfolio `mamaysporto` sebelumnya dirancang untuk berjalan di serverless Vercel dengan Supabase (PostgreSQL/Auth/Storage) dan OpenRouter AI (Yowman AI). Berdasarkan kesepakatan arsitektur homelab di [opt/HOMELAB-SSOT.md](file:///Users/macbookpro/tama/projek/mamaysporto/opt/HOMELAB-SSOT.md), aplikasi ini akan di-deploy ke infrastruktur lokal homelab Proxmox VE:
+Aplikasi portfolio `mamaysporto` saat ini berjalan sebagai SolidJS/Vite frontend dengan Express 5 dan PostgreSQL. Vercel, Supabase, dan OpenRouter merupakan konfigurasi/SQL legacy, bukan layanan yang dipakai runtime root. Arsitektur deployment yang tercatat di repository adalah Docker Compose pada homelab Proxmox VE:
 
 1. **LXC Ingress Gateway (ID 10080, IP 192.168.0.80):**
    - Menjalankan Cloudflare Tunnel (`cloudflared`) dan Traefik v3.1.
    - Menggunakan Traefik File Provider (`/opt/ingress/dynamic/`) untuk merutekan request `profile.mamay.my.id` ke backend LXC aplikasi.
 2. **LXC Aplikasi (ID 10018, IP 192.168.0.18):**
    - Berjalan pada container Proxmox terisolasi dengan IP statis `192.168.0.18`.
-   - Menggantikan ketergantungan eksternal (Supabase & OpenRouter AI):
-     - OpenRouter AI / Chat area dinonaktifkan sepenuhnya.
-     - Supabase digantikan oleh database internal PostgreSQL 16 (container) + backend REST API Node.js.
+   - Menyediakan runtime self-hosted:
+     - AI Chat tidak termasuk dalam aplikasi aktif.
+     - Database internal PostgreSQL 16 (container) + backend REST API Express.
      - Media storage (foto Hero, screenshot Project) disimpan di disk lokal LXC 10018 (volume `/uploads`) dan disajikan langsung via HTTP.
    - Menjalankan GitHub Actions Self-Hosted Runner langsung di LXC 10018 untuk build & deploy lokal (`docker compose up -d --build`) tanpa registry GHCR dan tanpa SSH deployment antar-LXC.
 3. **Pembaruan SSOT:**
@@ -42,8 +42,9 @@ LXC 10080 (gateway-ingress - 192.168.0.80)
 LXC 10018 (profile-app - 192.168.0.18:3000)
   ├── GitHub Actions Runner (Host service / systemd)
   └── Docker Compose:
-       ├── app (Node.js multi-stage: SolidJS static build + REST API + uploads) [:3000]
+       ├── app (Node.js multi-stage: SolidJS static build + Express REST API + uploads) [:3000]
        │    └── Mount: uploads_data:/app/uploads
+       ├── migrator (one-shot runtime-role provisioning and SQL migrations)
        └── postgres (Postgres 16 Alpine - isolated bridge network) [:5432 internal]
             └── Mount: postgres_data:/var/lib/postgresql/data
 ```
@@ -77,7 +78,7 @@ LXC 10018 (profile-app - 192.168.0.18:3000)
 ### 3.2 LXC 10018 Application Stack
 - **Direktori Deployment:** `/opt/mamaysporto`
 - **Stack:**
-  1. `server/server.js`: Web server Node.js ringan (menggunakan Fastify atau native HTTP) yang:
+  1. `server/index.js`: Express server yang:
      - Melayani static build frontend `dist/` (dengan fallback SPA routing ke `index.html`).
      - Menyajikan upload media dari `/uploads/` dengan header caching.
      - Menyediakan endpoint REST API:
@@ -90,10 +91,12 @@ LXC 10018 (profile-app - 192.168.0.18:3000)
      - Stage 1: Build SolidJS static assets (`npm run build`).
      - Stage 2: Runtime minimal Node.js alpine, menginstall runtime dependencies, menjalankan `server/server.js`.
   3. `compose.yaml`:
-     - Service `postgres`: image `postgres:16-alpine`, env `POSTGRES_DB=mamaysporto`, `POSTGRES_USER=postgres`, `POSTGRES_PASSWORD=...`, volume `postgres_data`.
-     - Service `app`: build context `.`, ports `3000:3000`, depends_on `postgres`, volumes `uploads_data:/app/uploads`.
+     - Service `postgres`: image `postgres:16-alpine`, bootstrap credentials dari private `.env`, volume `postgres_data`.
+     - Service `migrator`: menggunakan bootstrap role sekali jalan untuk membuat role runtime terbatas dan menjalankan migrasi bernomor sebelum aplikasi dimulai.
+     - Service `app`: koneksi memakai `APP_DB_USER`/`APP_DB_PASSWORD`, port 3000 untuk jalur ingress, volume `uploads_data:/app/uploads`.
   4. Database Schema & Seed:
-     - Script SQL inisialisasi tabel (`hero`, `about`, `skills`, `projects`, `experience`, `site_settings`, `project_tags`, `admins`) yang otomatis dijalankan saat container Postgres pertama kali dibuat via `/docker-entrypoint-initdb.d/init.sql`.
+     - `database/01-init.sql` dan `database/02-seed.sql` menyiapkan schema dan konten publik hanya pada volume PostgreSQL baru. Tidak ada akun admin bersama di seed; buat akun pertama melalui `node scripts/create-admin.js`.
+     - `database/migrations/*.sql` dilacak melalui `schema_migrations` dan dijalankan oleh `scripts/migrate.js` sebelum deployment.
 
 ### 3.3 Client Integration
 - `src/lib/api.js`:
@@ -109,11 +112,16 @@ LXC 10018 (profile-app - 192.168.0.18:3000)
   - Trigger: `push` ke `main`.
   - Steps:
     - Checkout repo
+    - Validasi dependency produksi, lint, dan test
     - Pastikan direktori `/opt/mamaysporto` dan file `.env` tersedia
-    - Jalankan `docker compose up -d --build`
+    - Build image, jalankan migrator, lalu deploy dengan Docker Compose
     - Cek status container dan healthcheck `curl -f http://localhost:3000/api/health`
 
 ### 3.5 SSOT Synchronization
 - Memperbarui `opt/HOMELAB-SSOT.md`:
   - Perbarui status LXC `10018` dengan IP `192.168.0.18`, domain `profile.mamay.my.id`, port 3000.
   - Catat pola runner per-LXC dan penyimpanan dynamic Traefik.
+
+## 4. Internal network trust boundary
+
+Cloudflare mengakhiri TLS publik di edge. Route Traefik yang tersimpan di repository meneruskan HTTP dari LXC ingress 10080 (`192.168.0.80`) ke app pada LXC 10018 (`192.168.0.18:3000`). Source ini tidak membuktikan isolasi LAN atau aturan firewall aktif. Batasi port 3000 pada firewall LXC/Proxmox agar hanya gateway ingress yang dapat terhubung dan verifikasi aturan runtime. Jika LAN tidak sepenuhnya tepercaya, aktifkan HTTPS atau mTLS antara Traefik dan app serta validasi sertifikat backend. TLS Cloudflare tidak melindungi hop internal ini.

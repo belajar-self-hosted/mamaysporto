@@ -9,12 +9,12 @@ create table if not exists project_tags (
 
 alter table project_tags enable row level security;
 
+drop policy if exists "Public read project_tags" on project_tags;
 create policy "Public read project_tags" on project_tags for select using (true);
 
-create policy "Authenticated write project_tags" on project_tags for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
+-- Authenticated users are not necessarily administrators. Keep writes denied
+-- until this legacy Supabase path has a verified admin claim/allowlist.
+drop policy if exists "Authenticated write project_tags" on project_tags;
 
 insert into project_tags (name) values
   ('AI'), ('Express'), ('Desktop'), ('Management'), ('Web'), ('Next.js'), ('postgres')

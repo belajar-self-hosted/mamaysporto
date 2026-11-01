@@ -6,7 +6,7 @@ import { setFavicon } from "../../lib/favicon";
 import { notifySuccess, notifyError, setDirty } from "../adminStore";
 
 export default function SiteSettingsPanel() {
-  const [settings, { refetch }] = createResource(() => fetchCollection("site_settings"));
+  const [settings, { refetch }] = createResource(() => fetchCollection("site_settings", { includePrivate: true }));
   const [form, setForm] = createSignal(null);
   const [original, setOriginal] = createSignal(null);
   const [saving, setSaving] = createSignal(false);

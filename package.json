@@ -1,15 +1,17 @@
 {
-  "name": "portfolio-temp",
+  "name": "mamaysporto",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"node server/index.js\"",
+    "dev": "concurrently \"vite\" \"node --env-file-if-exists=.env server/index.js\"",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node server/index.js",
-    "test": "node test/server.test.js",
-    "lint": "eslint ."
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "test": "node test/server.test.js && node test/api-cache.test.js",
+    "lint": "eslint .",
+    "migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "create-admin": "node --env-file-if-exists=.env scripts/create-admin.js"
   },
   "dependencies": {
     "animejs": "^4.5.0",
@@ -24,13 +26,15 @@
   },
   "devDependencies": {
     "concurrently": "^10.0.4",
-    "eslint": "^9.39.5",
-    "eslint-plugin-solid": "^0.14.5",
-    "prettier": "^3.9.5",
+    "eslint": "^10.14.0",
+    "eslint-plugin-solid": "^0.18.1",
     "vite": "^8.1.1",
     "vite-plugin-solid": "^2.11.12"
   },
+  "engines": {
+    "node": ">=22.13.0 <23 || >=24"
+  },
   "overrides": {
-    "brace-expansion": ">=5.0.7"
+    "minimatch": "11.0.3"
   }
 }

@@ -21,17 +21,7 @@ drop policy if exists "Public read site-images" on storage.objects;
 create policy "Public read site-images" on storage.objects for select
   using (bucket_id = 'site-images');
 
+-- Keep writes denied until a specific administrator identity is enforceable.
 drop policy if exists "Authenticated upload site-images" on storage.objects;
-create policy "Authenticated upload site-images" on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'site-images');
-
 drop policy if exists "Authenticated update site-images" on storage.objects;
-create policy "Authenticated update site-images" on storage.objects for update
-  to authenticated
-  using (bucket_id = 'site-images');
-
 drop policy if exists "Authenticated delete site-images" on storage.objects;
-create policy "Authenticated delete site-images" on storage.objects for delete
-  to authenticated
-  using (bucket_id = 'site-images');

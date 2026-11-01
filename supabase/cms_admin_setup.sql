@@ -7,7 +7,8 @@
 -- Menambahkan:
 -- 1. Kolom judul/CTA dinamis di tabel hero
 -- 2. Tabel site_settings (navbar, footer, contact, AI system prompt)
--- 3. Policy write (insert/update/delete) khusus untuk user authenticated (admin)
+-- 3. RLS policies: public read only; writes remain denied until an explicit
+--    administrator identity can be enforced by a verified claim/allowlist.
 -- 4. Storage bucket "project-images" (public read, max 1MB) untuk upload gambar project
 --
 -- Setelah menjalankan script ini, buat 1 akun admin lewat:
@@ -49,42 +50,15 @@ create policy "Public read site_settings" on site_settings for select using (tru
 
 insert into site_settings (id) values (1) on conflict (id) do nothing;
 
--- 3. Write policies (authenticated/admin only) untuk semua tabel CMS
+-- 3. Remove the old broad authenticated-write policies. An authenticated
+--    Supabase user is not necessarily an administrator; with RLS enabled and
+--    no replacement write policy, writes fail closed.
 drop policy if exists "Authenticated write hero" on hero;
-create policy "Authenticated write hero" on hero for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
-
 drop policy if exists "Authenticated write about" on about;
-create policy "Authenticated write about" on about for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
-
 drop policy if exists "Authenticated write skills" on skills;
-create policy "Authenticated write skills" on skills for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
-
 drop policy if exists "Authenticated write projects" on projects;
-create policy "Authenticated write projects" on projects for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
-
 drop policy if exists "Authenticated write experience" on experience;
-create policy "Authenticated write experience" on experience for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
-
 drop policy if exists "Authenticated write site_settings" on site_settings;
-create policy "Authenticated write site_settings" on site_settings for all
-  to authenticated
-  using ((select auth.uid()) is not null)
-  with check ((select auth.uid()) is not null);
 
 -- 4. Storage bucket untuk gambar project (public read, 1MB limit, admin write)
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -99,16 +73,5 @@ create policy "Public read project-images" on storage.objects for select
   using (bucket_id = 'project-images');
 
 drop policy if exists "Authenticated upload project-images" on storage.objects;
-create policy "Authenticated upload project-images" on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'project-images');
-
 drop policy if exists "Authenticated update project-images" on storage.objects;
-create policy "Authenticated update project-images" on storage.objects for update
-  to authenticated
-  using (bucket_id = 'project-images');
-
 drop policy if exists "Authenticated delete project-images" on storage.objects;
-create policy "Authenticated delete project-images" on storage.objects for delete
-  to authenticated
-  using (bucket_id = 'project-images');

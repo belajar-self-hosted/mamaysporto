@@ -88,7 +88,7 @@ export default function HeroScene() {
             mesh.rotation.z += (targetY * 0.3 - mesh.rotation.z) * 0.04;
           }
           renderer.render(scene, camera);
-          rafId = requestAnimationFrame(animateFrame);
+          if (!reduceMotion) rafId = requestAnimationFrame(animateFrame);
         };
         animateFrame();
       })

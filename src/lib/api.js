@@ -1,5 +1,26 @@
 // REST API Client for mamaysporto
-import { getStoredToken } from "./auth";
+import { getStoredToken, onAuthStateChange } from "./auth.js";
+
+const COLLECTION_CACHE_TTL_MS = 30_000;
+const COLLECTION_PAGE_SIZE = 500;
+const collectionCache = new Map();
+
+function clearPrivateCollectionCache() {
+  for (const [cacheKey, entry] of collectionCache) {
+    if (entry.isPrivate) collectionCache.delete(cacheKey);
+  }
+}
+
+onAuthStateChange(clearPrivateCollectionCache);
+
+export function invalidateCollection(collectionName) {
+  collectionCache.delete(collectionName);
+  for (const [cacheKey, entry] of collectionCache) {
+    if (entry.isPrivate && cacheKey.startsWith(`${collectionName}:private:`)) {
+      collectionCache.delete(cacheKey);
+    }
+  }
+}
 
 function getAuthHeaders() {
   const token = getStoredToken();
@@ -15,13 +36,60 @@ function getAuthHeaders() {
  * Singleton tables (hero, about, site_settings) mengembalikan object langsung.
  * Collection tables (skills, projects, experience, project_tags) mengembalikan array.
  */
-export async function fetchCollection(collectionName) {
-  const res = await fetch(`/api/data/${collectionName}`);
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.error || `Gagal mengambil data "${collectionName}".`);
-  }
-  return res.json();
+export function fetchCollection(collectionName, { includePrivate = false } = {}) {
+  const token = includePrivate ? getStoredToken() : null;
+  const cacheKey = includePrivate
+    ? `${collectionName}:private:${token ?? "anonymous"}`
+    : collectionName;
+  const cached = collectionCache.get(cacheKey);
+  if (cached?.promise) return cached.promise;
+  if (cached && cached.expiresAt > Date.now()) return Promise.resolve(cached.data);
+
+  const entry = { data: undefined, expiresAt: 0, promise: null, isPrivate: includePrivate };
+  const fetchPage = (offset) => fetch(
+    `/api/data/${encodeURIComponent(collectionName)}?limit=${COLLECTION_PAGE_SIZE}&offset=${offset}${includePrivate ? "&includePrivate=true" : ""}`,
+    includePrivate && token
+      ? { headers: { Authorization: `Bearer ${token}` } }
+      : undefined
+  ).then(async (res) => {
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Gagal mengambil data "${collectionName}".`);
+      }
+      return res.json();
+    });
+
+  const request = (async () => {
+    const firstPage = await fetchPage(0);
+    if (!Array.isArray(firstPage)) return firstPage;
+
+    const rows = [...firstPage];
+    let offset = firstPage.length;
+    let page = firstPage;
+    while (page.length === COLLECTION_PAGE_SIZE) {
+      page = await fetchPage(offset);
+      if (!Array.isArray(page)) throw new Error(`Respons koleksi "${collectionName}" tidak valid.`);
+      rows.push(...page);
+      offset += page.length;
+    }
+    return rows;
+  })()
+    .then((data) => {
+      if (collectionCache.get(cacheKey) === entry) {
+        entry.data = data;
+        entry.expiresAt = Date.now() + COLLECTION_CACHE_TTL_MS;
+        entry.promise = null;
+      }
+      return data;
+    })
+    .catch((error) => {
+      if (collectionCache.get(cacheKey) === entry) collectionCache.delete(cacheKey);
+      throw error;
+    });
+
+  entry.promise = request;
+  collectionCache.set(cacheKey, entry);
+  return request;
 }
 
 /** Update singleton row (id = 1) milik sebuah tabel. Butuh sesi admin login. */
@@ -36,6 +104,7 @@ export async function updateSingleton(table, patch) {
   if (!res.ok) {
     throw new Error(data.error || `Gagal menyimpan "${table}".`);
   }
+  invalidateCollection(table);
   return data;
 }
 
@@ -51,6 +120,7 @@ export async function insertRow(table, row) {
   if (!res.ok) {
     throw new Error(data.error || `Gagal menambah data "${table}".`);
   }
+  invalidateCollection(table);
   return data;
 }
 
@@ -68,6 +138,7 @@ export async function updateRow(table, id, patch) {
   if (!res.ok) {
     throw new Error(data.error || `Gagal menyimpan "${table}".`);
   }
+  invalidateCollection(table);
   return data;
 }
 
@@ -82,6 +153,7 @@ export async function deleteRow(table, id) {
     const data = await res.json().catch(() => ({}));
     throw new Error(data.error || `Gagal menghapus data "${table}".`);
   }
+  invalidateCollection(table);
 }
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB

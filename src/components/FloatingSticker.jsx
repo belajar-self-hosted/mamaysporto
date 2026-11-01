@@ -5,10 +5,9 @@ import "./FloatingSticker.css";
 /** Badge dekoratif yang melayang idle + parallax tipis mengikuti mouse di dalam .hero-section terdekat. */
 export default function FloatingSticker(props) {
   let ref;
-  const depth = props.depth ?? 12;
-  const baseRotate = props.rotate ?? 0;
-
   onMount(() => {
+    const depth = props.depth ?? 12;
+    const baseRotate = props.rotate ?? 0;
     let idleAnim;
     if (!prefersReducedMotion()) {
       idleAnim = animate(ref, {

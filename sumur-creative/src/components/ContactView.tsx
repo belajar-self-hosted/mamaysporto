@@ -223,6 +223,8 @@ export const ContactView: React.FC = () => {
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6H-Vc_zxZdTX7tCEpWQmH2i3t7ODafTNEjci9_B7XXjepxD1McljEbAC3ZP70UJorQC3Qy7mGRxk-Ml_7fAE85u6DNCMHPGUNJdmbRJAmTTPphlxJbzZ8fAt33R0fetwsvMh702uLWZWBmHBmSP4GbYdoFGLwyZLTDPCHPoj_Gi9khDv9dtUXXS_bXBkOQjSfX0dr1Os-KyIjcMVHIY9edNS4pJcxK6VkbjB4NK9YKz__kbfdFG-T"
                   alt="Surreal hand-drawn treasure map parchment with jagged coastlines, compass rose and mysterious markers."
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
 

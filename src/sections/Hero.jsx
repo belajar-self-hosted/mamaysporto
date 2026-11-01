@@ -51,7 +51,8 @@ export default function Hero() {
                 class="btn-ai"
                 onClick={(e) => {
                   burst(e.clientX, e.clientY);
-                  window.open(normalizeUrl(heroData().cta_yowman_link), "_blank");
+                  const url = normalizeUrl(heroData().cta_yowman_link);
+                  if (url) window.open(url, "_blank", "noopener,noreferrer");
                 }}
               >
                 {heroData().cta_yowman_label}
@@ -64,6 +65,9 @@ export default function Hero() {
         <img
           src={heroData()?.image || ppTama}
           alt="Fannandya Sutan Sakti Pratama"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
           class="hero-image"
         />
       </div>

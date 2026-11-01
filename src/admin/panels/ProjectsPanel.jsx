@@ -163,11 +163,11 @@ function ProjectForm(props) {
         <button type="submit" class="neo-btn btn-primary" disabled={busy() || uploading()}>
           {props.submitLabel || "Simpan"}
         </button>
-        <button type="button" class="neo-btn btn-default" disabled={busy()} onClick={props.onCancel}>
+        <button type="button" class="neo-btn btn-default" disabled={busy()} onClick={() => props.onCancel()}>
           Batal
         </button>
         <Show when={props.onDelete}>
-          <button type="button" class="neo-btn btn-accent" disabled={busy()} onClick={props.onDelete}>Hapus</button>
+          <button type="button" class="neo-btn btn-accent" disabled={busy()} onClick={() => props.onDelete()}>Hapus</button>
         </Show>
       </div>
     </form>
@@ -211,6 +211,20 @@ export default function ProjectsPanel() {
     }
   };
 
+  const handleCreate = async (data) => {
+    await insertRow("projects", data);
+    setOpenId(null);
+    notifySuccess("Project berhasil ditambahkan.");
+    refetch();
+  };
+
+  const handleUpdate = async (id, data) => {
+    await updateRow("projects", id, data);
+    setOpenId(null);
+    notifySuccess("Project berhasil disimpan.");
+    refetch();
+  };
+
   return (
     <div class="admin-panel">
       <h2>Projects</h2>
@@ -225,12 +239,7 @@ export default function ProjectsPanel() {
           <ProjectForm
             submitLabel="Tambah"
             onCancel={() => setOpenId(null)}
-            onSubmit={async (data) => {
-              await insertRow("projects", data);
-              setOpenId(null);
-              notifySuccess("Project berhasil ditambahkan.");
-              refetch();
-            }}
+            onSubmit={handleCreate}
           />
         </div>
       </Show>
@@ -265,12 +274,7 @@ export default function ProjectsPanel() {
                     initial={item}
                     submitLabel="Simpan"
                     onCancel={() => setOpenId(null)}
-                    onSubmit={async (data) => {
-                      await updateRow("projects", item.id, data);
-                      setOpenId(null);
-                      notifySuccess("Project berhasil disimpan.");
-                      refetch();
-                    }}
+                    onSubmit={(data) => handleUpdate(item.id, data)}
                     onDelete={() => handleDelete(item)}
                   />
                 </Show>

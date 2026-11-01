@@ -16,17 +16,20 @@ export default function Footer() {
         </div>
         <div class="footer-social">
           <For each={settings()?.social_links || []}>
-            {(link) => (
-              <a
-                href={normalizeUrl(link.url)}
-                class="social-link neo-box"
-                aria-label={platformLabel(link.url)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <SocialIcon url={link.url} />
-              </a>
-            )}
+            {(link) => {
+              const safeUrl = normalizeUrl(link.url);
+              return safeUrl ? (
+                <a
+                  href={safeUrl}
+                  class="social-link neo-box"
+                  aria-label={platformLabel(link.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SocialIcon url={link.url} />
+                </a>
+              ) : null;
+            }}
           </For>
         </div>
       </div>

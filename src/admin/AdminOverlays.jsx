@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js";
 import { toasts, dismissToast, confirmState, settleConfirm } from "./adminStore";
+import { accessibleDialog } from "../lib/modalA11y";
 
 /** Toast stack + confirm dialog global untuk seluruh admin panel. Mount sekali di AdminLayout. */
 export default function AdminOverlays() {
@@ -28,10 +29,10 @@ export default function AdminOverlays() {
       <Show when={confirmState()}>
         {(state) => (
           <div class="modal-overlay">
-            <div class="modal-box neo-box">
+            <div class="modal-box neo-box" role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title" tabindex="-1" use:accessibleDialog={() => settleConfirm(false)}>
               <div class="modal-header">
-                <span>{state().title}</span>
-                <button type="button" class="modal-close" onClick={() => settleConfirm(false)}>
+                <span id="admin-confirm-title">{state().title}</span>
+                <button type="button" class="modal-close" aria-label="Close confirmation" onClick={() => settleConfirm(false)}>
                   ×
                 </button>
               </div>
