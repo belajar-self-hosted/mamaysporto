@@ -111,11 +111,11 @@ export default function HeroPanel() {
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
-              <label>Label tombol AI Chat</label>
+              <label>Label tombol tautan eksternal</label>
               <input class="neo-input" value={form().cta_yowman_label} onInput={update("cta_yowman_label")} />
             </div>
             <div class="admin-form-group">
-              <label>Link tombol AI Chat</label>
+              <label>URL tombol tautan eksternal</label>
               <input class="neo-input" value={form().cta_yowman_link} onInput={update("cta_yowman_link")} />
             </div>
           </div>

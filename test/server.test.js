@@ -14,8 +14,47 @@ const sqlMigrationFiles = (await fs.readdir(migrationDirectory))
 assert.deepEqual(await listMigrationFiles(migrationDirectory), [
   "202611010001_ensure_updated_at_columns.sql",
   "202611010002_sync_admin_id_sequence.sql",
+  "202611010003_seed_cv_portfolio.sql",
 ]);
 assert.deepEqual(await listMigrationFiles(migrationDirectory), sqlMigrationFiles);
+
+const portfolioSeedSql = await fs.readFile(path.resolve("database/02-seed.sql"), "utf8");
+const cvProjectTitles = [
+  "Sarpras Apps",
+  "CampusTask",
+  "Website Portofolio & Asisten RAG",
+  "Sistem Informasi Desa",
+  "Portal Kemitraan Retali Travel",
+  "LMS Teknik Sipil UMY",
+  "KRL API",
+  "Home Server",
+  "mayPos",
+  "ASCII Converter",
+  "OSC",
+  "Beli Tiket",
+  "CV Generator",
+  "Website Personal",
+];
+for (const title of cvProjectTitles) {
+  assert.ok(portfolioSeedSql.includes(`'${title}'`), `Portfolio seed must include ${title}.`);
+}
+assert.ok(portfolioSeedSql.includes("sfannandya@gmail.com"), "Portfolio seed must include the CV email.");
+assert.ok(portfolioSeedSql.includes("Nusa Data Indonesia"), "Portfolio seed must include the CV startup experience.");
+assert.ok(portfolioSeedSql.includes("Universitas Muhammadiyah Yogyakarta — S1 Teknologi Informasi (2024)"), "Portfolio seed must include the education entry without inferring a graduation date.");
+assert.ok(portfolioSeedSql.includes("AI For Good — AI Singapore (6 Mei 2026)"), "Portfolio seed must include the first CV certification.");
+assert.ok(portfolioSeedSql.includes("T-Lab — PT Teknologi Kode Indonesia (Juni 2026)"), "Portfolio seed must include the second CV certification.");
+assert.ok(portfolioSeedSql.includes("Februari 2026 – Sekarang"), "Portfolio seed must use the valid, month-level experience period.");
+assert.ok(!portfolioSeedSql.includes("29 Februari 2026"), "Portfolio seed must not publish the invalid CV date.");
+assert.ok(portfolioSeedSql.includes("Integrasi payment gateway masih direncanakan"), "Portfolio seed must not describe the planned payment integration as completed.");
+assert.ok(portfolioSeedSql.includes("6285190847766"), "Portfolio seed must preserve the configured WhatsApp contact.");
+assert.ok(!portfolioSeedSql.includes("082220231617"), "Portfolio seed must not publish the CV phone separately.");
+
+const cvPortfolioMigrationSql = await fs.readFile(
+  path.resolve("database/migrations/202611010003_seed_cv_portfolio.sql"),
+  "utf8"
+);
+assert.ok(cvPortfolioMigrationSql.includes("AND category = 'live'"), "Legacy project cleanup must match the original category.");
+assert.ok(cvPortfolioMigrationSql.includes("AND tags = '[\"SolidJS\", \"Vite\", \"Neobrutalism\", \"Proxmox\"]'::jsonb"), "Legacy project cleanup must match the original tags.");
 
 const invalidMigrationDirectory = await fs.mkdtemp(path.join(os.tmpdir(), "mamaysporto-test-migrations-"));
 try {
