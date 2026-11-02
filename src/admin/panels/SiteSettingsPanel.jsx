@@ -60,21 +60,6 @@ export default function SiteSettingsPanel() {
     }
   };
 
-  const handleContactImageFile = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const url = await uploadSiteImage(file);
-      setForm({ ...form(), contact_image: url });
-    } catch (err) {
-      notifyError(err.message);
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -161,22 +146,7 @@ export default function SiteSettingsPanel() {
             </button>
           </div>
 
-          <h3>Contact Section</h3>
-          <div class="admin-form-group">
-            <label>Judul Contact</label>
-            <input class="neo-input" value={form().contact_title} onInput={update("contact_title")} />
-          </div>
-          <div class="admin-form-group">
-            <label>Deskripsi Contact</label>
-            <textarea class="neo-input" rows="2" value={form().contact_desc} onInput={update("contact_desc")} />
-          </div>
-          <div class="admin-form-group">
-            <label>Gambar Dekoratif Contact (maks 1 MB) <span class="admin-ratio-tag">Rasio disarankan 1:1</span></label>
-            <Show when={form().contact_image}>
-              <img src={form().contact_image} alt="preview" class="admin-contact-image-preview" />
-            </Show>
-            <input type="file" accept="image/*" onChange={handleContactImageFile} disabled={uploading()} />
-          </div>
+          <h3>Report (WhatsApp)</h3>
           <div class="admin-form-row">
             <div class="admin-form-group">
               <label>Nomor WhatsApp (tombol "Report")</label>

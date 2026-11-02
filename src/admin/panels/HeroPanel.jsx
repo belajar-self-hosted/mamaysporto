@@ -99,15 +99,9 @@ export default function HeroPanel() {
             <label>Subtitle</label>
             <textarea class="neo-input" rows="3" value={form().subtitle} onInput={update("subtitle")} />
           </div>
-          <div class="admin-form-row">
-            <div class="admin-form-group">
-              <label>Label tombol "Projects"</label>
-              <input class="neo-input" value={form().cta_projects_label} onInput={update("cta_projects_label")} />
-            </div>
-            <div class="admin-form-group">
-              <label>Label tombol "Contact"</label>
-              <input class="neo-input" value={form().cta_contact_label} onInput={update("cta_contact_label")} />
-            </div>
+          <div class="admin-form-group">
+            <label>Label tombol "Projects"</label>
+            <input class="neo-input" value={form().cta_projects_label} onInput={update("cta_projects_label")} />
           </div>
           <div class="admin-form-row">
             <div class="admin-form-group">
