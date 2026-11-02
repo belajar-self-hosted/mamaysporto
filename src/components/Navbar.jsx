@@ -44,7 +44,6 @@ export default function Navbar() {
           <li><a href="#skills" data-cursor="hover" onClick={closeMenu}>Skills</a></li>
           <li><a href="#projects" data-cursor="hover" onClick={closeMenu}>Projects</a></li>
           <li><a href="#experience" data-cursor="hover" onClick={closeMenu}>Experience</a></li>
-          <li><a href="#contact" data-cursor="hover" onClick={closeMenu}>Contact</a></li>
           <li><a href={buildWhatsAppLink(settings()?.report_whatsapp_number, settings()?.report_whatsapp_message) || "#"} data-cursor="hover" onClick={closeMenu} class="report-btn">Report</a></li>
         </ul>
       </nav>

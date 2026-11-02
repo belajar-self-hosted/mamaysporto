@@ -39,15 +39,6 @@ export default function Hero() {
               </Button>
               <Button
                 variant="default"
-                onClick={(e) => {
-                  burst(e.clientX, e.clientY);
-                  document.getElementById("contact").scrollIntoView();
-                }}
-              >
-                {heroData().cta_contact_label}
-              </Button>
-              <Button
-                variant="default"
                 class="btn-ai"
                 onClick={(e) => {
                   burst(e.clientX, e.clientY);

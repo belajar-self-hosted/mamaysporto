@@ -370,16 +370,6 @@
   margin-bottom: 0.5rem;
 }
 
-.admin-contact-image-preview {
-  display: block;
-  width: 120px;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border: var(--border-main);
-  border-radius: var(--radius-main);
-  margin-bottom: 0.5rem;
-}
-
 .admin-skill-icon-preview {
   width: 28px;
   height: 28px;

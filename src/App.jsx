@@ -1,6 +1,5 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import WelcomeModal from "./components/WelcomeModal";
 import CustomCursor from "./components/CustomCursor";
 import Marquee from "./components/Marquee";
 import Hero from "./sections/Hero";
@@ -8,7 +7,6 @@ import About from "./sections/About";
 import Skills from "./sections/Skills";
 import Projects from "./sections/Projects";
 import Experience from "./sections/Experience";
-import Contact from "./sections/Contact";
 
 export default function App() {
   return (
@@ -16,7 +14,6 @@ export default function App() {
       <div class="neo-texture-overlay" aria-hidden="true" />
       <CustomCursor />
       <Navbar />
-      <WelcomeModal />
       <main>
         <Hero />
         <About />
@@ -24,7 +21,6 @@ export default function App() {
         <Marquee />
         <Projects />
         <Experience />
-        <Contact />
       </main>
       <Footer />
     </>
